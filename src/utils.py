@@ -25,10 +25,17 @@ def get_logger(name: str) -> logging.Logger:
 
 
 def load_dotenv(dotenv_path: str = ".env") -> None:
-    if not Path(dotenv_path).exists():
-        raise FileNotFoundError(f"Dotenv file not found: {dotenv_path}")
+    path = Path(dotenv_path)
+    if not path.is_absolute():
+        # Try relative to the caller's file location before falling back to cwd
+        caller_dir = Path(__file__).parent.parent
+        candidate = caller_dir / dotenv_path
+        if candidate.exists():
+            path = candidate
+    if not path.exists():
+        return  # .env is optional — env vars may already be set by the caller
 
-    with Path(dotenv_path).open() as f:
+    with path.open() as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith("#"):
