@@ -9,6 +9,7 @@ from google.ads.googleads.v20.common.types.bidding import (
     MaximizeConversions,
     MaximizeConversionValue,
     TargetCpa,
+    TargetCpm,
     TargetImpressionShare,
     TargetRoas,
     TargetSpend,
@@ -100,6 +101,8 @@ def _apply_bidding_strategy(
         campaign.target_spend = ts
     elif bst == "TARGET_IMPRESSION_SHARE":
         campaign.target_impression_share = TargetImpressionShare()
+    elif bst == "TARGET_CPM":
+        campaign.target_cpm = TargetCpm()
     else:
         raise ValueError(f"Unsupported bidding_strategy_type: {bidding_strategy_type}")
 
@@ -203,6 +206,42 @@ class CampaignService:
                 campaign.network_settings.target_content_network = False
                 campaign.network_settings.target_partner_search_network = False
             # VIDEO and PERFORMANCE_MAX: no network_settings fields to set
+
+            # Validate bidding strategy compatibility per channel type.
+            # The API returns OPERATION_NOT_PERMITTED_FOR_CONTEXT otherwise.
+            _VALID_STRATEGIES: dict[
+                AdvertisingChannelTypeEnum.AdvertisingChannelType, set[str]
+            ] = {
+                _SEARCH: {
+                    "MANUAL_CPC", "TARGET_CPA", "TARGET_ROAS",
+                    "MAXIMIZE_CONVERSIONS", "MAXIMIZE_CONVERSION_VALUE",
+                    "TARGET_SPEND", "TARGET_IMPRESSION_SHARE", "PORTFOLIO",
+                },
+                _DISPLAY: {
+                    "TARGET_CPA", "TARGET_ROAS", "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE", "TARGET_CPM", "MANUAL_CPC",
+                    "PORTFOLIO",
+                },
+                _SHOPPING: {
+                    "MANUAL_CPC", "TARGET_ROAS", "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE", "TARGET_SPEND", "PORTFOLIO",
+                },
+                AdvertisingChannelTypeEnum.AdvertisingChannelType.VIDEO: {
+                    "TARGET_CPM", "MAXIMIZE_CONVERSIONS", "TARGET_CPA",
+                    "TARGET_ROAS", "MAXIMIZE_CONVERSION_VALUE", "PORTFOLIO",
+                },
+                _PMAX: {
+                    "MAXIMIZE_CONVERSIONS", "MAXIMIZE_CONVERSION_VALUE", "PORTFOLIO",
+                },
+            }
+            bst_upper = bidding_strategy_type.upper()
+            valid = _VALID_STRATEGIES.get(advertising_channel_type)
+            if valid is not None and bst_upper not in valid:
+                raise ValueError(
+                    f"Bidding strategy '{bidding_strategy_type}' is not valid for "
+                    f"{advertising_channel_type.name} campaigns. "
+                    f"Valid strategies: {', '.join(sorted(valid))}"
+                )
 
             _apply_bidding_strategy(
                 campaign,
