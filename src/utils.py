@@ -127,11 +127,10 @@ RATE_LIMIT_MSG = (
 
 
 def format_ads_error(ex: GoogleAdsException) -> str:
-    """Extract concise, LLM-readable error messages from a GoogleAdsException.
+    """Extract LLM-readable error messages from a GoogleAdsException.
 
-    Instead of dumping the raw protobuf ``GoogleAdsFailure``, this pulls the
-    human-readable ``.message`` from each ``GoogleAdsError`` and includes the
-    ``request_id`` for debugging.
+    Includes error code, field location, and message so the LLM can diagnose
+    root causes (e.g. developer token access level, invalid field values).
     """
     parts: list[str] = []
     failure = getattr(ex, "failure", None)
@@ -139,8 +138,34 @@ def format_ads_error(ex: GoogleAdsException) -> str:
     if errors is not None:
         try:
             for error in errors:
-                parts.append(error.message or "Unknown error")
-        except TypeError:
+                # Build error_code string (e.g. "AUTHORIZATION_ERROR / DEVELOPER_TOKEN_NOT_APPROVED")
+                error_code = getattr(error, "error_code", None)
+                code_str = ""
+                if error_code is not None:
+                    # Find the first non-zero enum field on error_code
+                    for field in error_code._meta.fields:  # type: ignore[union-attr]
+                        val = getattr(error_code, field.name, None)
+                        if val is not None and val != 0:
+                            code_str = f"{field.name.upper()} / {type(val).__name__}.{val.name}"
+                            break
+
+                # Field location (e.g. "operations[0].create.advertising_channel_type")
+                location = getattr(error, "location", None)
+                loc_str = ""
+                if location is not None:
+                    field_path_elements = getattr(location, "field_path_elements", [])
+                    if field_path_elements:
+                        loc_parts = []
+                        for el in field_path_elements:
+                            idx = getattr(el, "index", None)
+                            name = getattr(el, "field_name", "")
+                            loc_parts.append(f"{name}[{idx}]" if idx is not None else name)
+                        loc_str = f" [field: {'.'.join(loc_parts)}]"
+
+                msg = error.message or "Unknown error"
+                entry = f"[{code_str}]{loc_str} {msg}" if code_str else f"{msg}{loc_str}"
+                parts.append(entry)
+        except (TypeError, AttributeError):
             parts = []
 
     if parts:
