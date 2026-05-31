@@ -183,15 +183,26 @@ class CampaignService:
                 CampaignExperimentTypeEnum.CampaignExperimentType.BASE
             )
 
-            # Network settings only apply to non-PMax campaigns
-            if advertising_channel_type != _PMAX:
+            # Network settings vary by channel type — invalid fields cause
+            # OPERATION_NOT_PERMITTED_FOR_CONTEXT errors from the API.
+            _SEARCH = AdvertisingChannelTypeEnum.AdvertisingChannelType.SEARCH
+            _DISPLAY = AdvertisingChannelTypeEnum.AdvertisingChannelType.DISPLAY
+            _SHOPPING = AdvertisingChannelTypeEnum.AdvertisingChannelType.SHOPPING
+            if advertising_channel_type == _SEARCH:
                 campaign.network_settings.target_google_search = True
                 campaign.network_settings.target_search_network = True
-                campaign.network_settings.target_content_network = (
-                    advertising_channel_type
-                    != AdvertisingChannelTypeEnum.AdvertisingChannelType.SEARCH
-                )
+                campaign.network_settings.target_content_network = False
                 campaign.network_settings.target_partner_search_network = False
+            elif advertising_channel_type == _DISPLAY:
+                campaign.network_settings.target_content_network = True
+                campaign.network_settings.target_google_search = False
+                campaign.network_settings.target_search_network = False
+            elif advertising_channel_type == _SHOPPING:
+                campaign.network_settings.target_google_search = True
+                campaign.network_settings.target_search_network = False
+                campaign.network_settings.target_content_network = False
+                campaign.network_settings.target_partner_search_network = False
+            # VIDEO and PERFORMANCE_MAX: no network_settings fields to set
 
             _apply_bidding_strategy(
                 campaign,
