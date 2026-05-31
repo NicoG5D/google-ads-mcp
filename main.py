@@ -42,6 +42,7 @@ from src.servers.asset_group_asset_server import asset_group_asset_server
 from src.servers.asset_group_server import asset_group_server
 from src.servers.asset_group_signal_server import asset_group_signal_server
 from src.servers.asset_server import asset_server
+from src.servers.asset_set_asset_server import asset_set_asset_server
 from src.servers.asset_set_server import asset_set_server
 from src.servers.audience_insights_server import audience_insights_server
 from src.servers.audience_server import audience_server
@@ -69,6 +70,10 @@ from src.servers.campaign_customizer_server import (
     campaign_customizer_server,
 )
 from src.servers.campaign_draft_server import campaign_draft_server
+from src.servers.campaign_group_server import campaign_group_server
+from src.servers.campaign_lifecycle_goal_server import (
+    campaign_lifecycle_goal_server,
+)
 from src.servers.campaign_label_server import campaign_label_server
 from src.servers.campaign_server import campaign_server
 from src.servers.campaign_shared_set_server import (
@@ -88,17 +93,24 @@ from src.servers.conversion_upload_server import conversion_upload_server
 from src.servers.conversion_value_rule_server import (
     conversion_value_rule_server,
 )
+from src.servers.conversion_value_rule_set_server import (
+    conversion_value_rule_set_server,
+)
 from src.servers.custom_audience_server import custom_audience_server
 from src.servers.custom_conversion_goal_server import (
     custom_conversion_goal_server,
 )
 from src.servers.custom_interest_server import custom_interest_server
 from src.servers.customer_asset_server import customer_asset_server
+from src.servers.customer_asset_set_server import customer_asset_set_server
 from src.servers.customer_client_link_server import (
     customer_client_link_server,
 )
 from src.servers.customer_conversion_goal_server import (
     customer_conversion_goal_server,
+)
+from src.servers.customer_lifecycle_goal_server import (
+    customer_lifecycle_goal_server,
 )
 from src.servers.customer_customizer_server import (
     customer_customizer_server,
@@ -133,6 +145,7 @@ from src.servers.invoice_server import invoice_server
 from src.servers.keyword_plan_ad_group_keyword_server import (
     keyword_plan_ad_group_keyword_server,
 )
+from src.servers.keyword_theme_constant_server import keyword_theme_constant_server
 from src.servers.keyword_plan_ad_group_server import (
     keyword_plan_ad_group_server,
 )
@@ -152,17 +165,37 @@ from src.servers.offline_user_data_job_server import (
 from src.servers.payments_account_server import (
     payments_account_server,
 )
+from src.servers.product_link_invitation_server import product_link_invitation_server
 from src.servers.product_link_server import product_link_server
 from src.servers.reach_plan_server import reach_plan_server
 from src.servers.recommendation_server import recommendation_server
+from src.servers.recommendation_subscription_server import (
+    recommendation_subscription_server,
+)
 from src.servers.remarketing_action_server import remarketing_action_server
 from src.servers.search_server import search_server
 from src.servers.shared_criterion_server import shared_criterion_server
 from src.servers.shared_set_server import shared_set_server
 from src.servers.smart_campaign_server import smart_campaign_server
+from src.servers.smart_campaign_setting_server import (
+    smart_campaign_setting_server,
+)
+from src.servers.shareable_preview_server import shareable_preview_server
+from src.servers.content_creator_insights_server import (
+    content_creator_insights_server,
+)
+from src.servers.travel_asset_suggestion_server import travel_asset_suggestion_server
+from src.servers.local_services_lead_server import local_services_lead_server
+from src.servers.customer_sk_ad_network_conversion_value_schema_server import (
+    customer_sk_ad_network_conversion_value_schema_server,
+)
+from src.servers.third_party_app_analytics_link_server import (
+    third_party_app_analytics_link_server,
+)
 
 # from src.sdk_servers.extension_feed_item_server import extension_feed_item_sdk_server  # Not available in v20
 from src.servers.user_data_server import user_data_server
+from src.servers.user_list_customer_type_server import user_list_customer_type_server
 from src.servers.user_list_server import user_list_server
 from src.utils import get_logger, load_dotenv
 
@@ -285,6 +318,9 @@ SERVER_GROUPS = {
         ("ad_group_ad", ad_group_ad_server),
         ("conversion", conversion_server),
         ("google_ads", google_ads_server),
+        ("campaign_group", campaign_group_server),
+        ("campaign_lifecycle_goal", campaign_lifecycle_goal_server),
+        ("shareable_preview", shareable_preview_server),
     ],
     "assets": [
         ("asset", asset_server),
@@ -297,6 +333,9 @@ SERVER_GROUPS = {
         ("campaign_asset", campaign_asset_server),
         ("campaign_asset_set", campaign_asset_set_server),
         ("customer_asset", customer_asset_server),
+        ("asset_set_asset", asset_set_asset_server),
+        ("customer_asset_set", customer_asset_set_server),
+        ("travel_asset_suggestion", travel_asset_suggestion_server),
     ],
     "targeting": [
         ("campaign_criterion", campaign_criterion_server),
@@ -307,6 +346,7 @@ SERVER_GROUPS = {
         ("custom_interest", custom_interest_server),
         ("custom_audience", custom_audience_server),
         ("user_list", user_list_server),
+        ("user_list_customer_type", user_list_customer_type_server),
     ],
     "bidding": [
         ("bidding_strategy", bidding_strategy_server),
@@ -324,6 +364,7 @@ SERVER_GROUPS = {
         ("kp_campaign_kw", keyword_plan_campaign_keyword_server),
         ("reach_plan", reach_plan_server),
         ("brand_suggestion", brand_suggestion_server),
+        ("keyword_theme_constant", keyword_theme_constant_server),
     ],
     "experiments": [
         ("experiment", experiment_server),
@@ -334,13 +375,16 @@ SERVER_GROUPS = {
         ("search", search_server),
         ("google_ads_field", google_ads_field_server),
         ("recommendation", recommendation_server),
+        ("recommendation_subscription", recommendation_subscription_server),
         ("invoice", invoice_server),
         ("audience_insights", audience_insights_server),
+        ("content_creator_insights", content_creator_insights_server),
     ],
     "conversion": [
         ("conversion_upload", conversion_upload_server),
         ("conversion_adjustment_upload", conversion_adjustment_upload_server),
         ("conversion_value_rule", conversion_value_rule_server),
+        ("conversion_value_rule_set", conversion_value_rule_set_server),
         ("conversion_custom_variable", conversion_custom_variable_server),
         ("conv_goal_config", conversion_goal_campaign_config_server),
         ("custom_conversion_goal", custom_conversion_goal_server),
@@ -379,10 +423,16 @@ SERVER_GROUPS = {
         ("payments_account", payments_account_server),
         ("identity_verification", identity_verification_server),
         ("product_link", product_link_server),
+        ("product_link_invitation", product_link_invitation_server),
         ("data_link", data_link_server),
+        ("customer_lifecycle_goal", customer_lifecycle_goal_server),
+        ("local_services_lead", local_services_lead_server),
+        ("skan_schema", customer_sk_ad_network_conversion_value_schema_server),
+        ("third_party_analytics_link", third_party_app_analytics_link_server),
     ],
     "other": [
         ("smart_campaign", smart_campaign_server),
+        ("smart_campaign_setting", smart_campaign_setting_server),
         ("batch_job", batch_job_server),
         ("user_data", user_data_server),
     ],
