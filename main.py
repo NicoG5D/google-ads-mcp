@@ -195,6 +195,7 @@ from src.servers.third_party_app_analytics_link_server import (
 
 # from src.sdk_servers.extension_feed_item_server import extension_feed_item_sdk_server  # Not available in v20
 from src.servers.user_data_server import user_data_server
+from src.servers.user_interest_server import user_interest_server
 from src.servers.user_list_customer_type_server import user_list_customer_type_server
 from src.servers.user_list_server import user_list_server
 from src.utils import get_logger, load_dotenv
@@ -347,6 +348,7 @@ SERVER_GROUPS = {
         ("custom_audience", custom_audience_server),
         ("user_list", user_list_server),
         ("user_list_customer_type", user_list_customer_type_server),
+        ("user_interest", user_interest_server),
     ],
     "bidding": [
         ("bidding_strategy", bidding_strategy_server),
