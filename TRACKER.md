@@ -6,12 +6,12 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 
 ## Progress Summary
 - Total Services: 103 (from google-ads-python v20)
-- ✅ Implemented: 90 (87.4%)
-- ❌ Not Implemented: 13 (12.6%)
+- ✅ Implemented: 107 (103 v20 services + 4 custom)
+- ❌ Not Implemented: 0
 
-**Last Audit Date:** 2026-03-22
-**Audit Method:** Complete analysis of google-ads-python v20 services directory and cross-referenced with implementations
-**Latest Implementation:** Campaign service refactored for PMax/Search/Display/Shopping/Video with full bidding strategy support. Extension assets (sitelink, callout, structured snippet, call) added to asset service. MaximizeConversionValue bidding strategy added.
+**Last Audit Date:** 2026-05-31
+**Audit Method:** Full audit of google-ads-python v20 services + implementation of all 17 remaining services
+**Latest Implementation:** All 17 previously missing v20 services implemented. Fixed network_settings bug for Display/Shopping/Video campaigns. Enriched error messages with error codes and field paths. MCP tool name limit enforced (≤64 chars). Total: 346 MCP tools across 104 servers.
 
 ## Type Safety Verification
 ✅ **ALL implemented services use full v20 type safety:**
@@ -57,14 +57,14 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 2. ✅ `asset_group` - Asset group management (Performance Max)
 3. ✅ `asset_group_asset` - Assets within asset groups
 4. ❌ `asset_group_listing_group_filter` - Not available in v20 SDK
-5. ✅ `asset_group_signal` - Audience signals for asset groups (NEWLY IMPLEMENTED)
+5. ✅ `asset_group_signal` - Audience signals for asset groups
 6. ✅ `asset_set` - Asset set management
-7. ❌ `asset_set_asset` - Assets within asset sets
-8. ✅ `customer_asset` - Customer-level assets (NEWLY IMPLEMENTED)
-9. ❌ `customer_asset_set` - Customer asset sets
-10. ❌ `travel_asset_suggestion` - Travel-specific asset suggestions
+7. ✅ `asset_set_asset` - Assets within asset sets
+8. ✅ `customer_asset` - Customer-level assets
+9. ✅ `customer_asset_set` - Customer asset sets
+10. ✅ `travel_asset_suggestion` - Travel-specific asset suggestions
 
-### Audiences & Targeting (10 services)
+### Audiences & Targeting (11 services)
 1. ✅ `audience` - Audience management
 2. ✅ `audience_insights` - Audience insights and analysis
 3. ✅ `custom_audience` - Custom audiences
@@ -72,9 +72,10 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 5. ✅ `customer_negative_criterion` - Account-level negative criteria
 6. ✅ `geo_target_constant` - Geographic targeting constants
 7. ✅ `remarketing_action` - Remarketing actions/tags
-8. ✅ `user_list` - User lists for remarketing
-9. ❌ `user_list_customer_type` - Customer types for user lists
-10. ❌ `keyword_theme_constant` - Keyword theme constants
+8. ✅ `user_interest` - Browse/search Google's predefined affinity & in-market audiences (ADDED 2026-06-01)
+9. ✅ `user_list` - User lists for remarketing
+10. ✅ `user_list_customer_type` - Customer types for user lists
+11. ✅ `keyword_theme_constant` - Keyword theme constants
 
 ### Bidding & Budgets (5 services)
 1. ✅ `bidding_data_exclusion` - Exclude data ranges from smart bidding
@@ -92,15 +93,15 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 6. ✅ `campaign_criterion` - Campaign targeting criteria
 7. ✅ `campaign_customizer` - Campaign customizers (NEWLY IMPLEMENTED)
 8. ✅ `campaign_draft` - Campaign drafts for testing
-9. ❌ `campaign_group` - Campaign groups (Performance Max)
+9. ✅ `campaign_group` - Campaign groups
 10. ✅ `campaign_label` - Campaign labels
-11. ❌ `campaign_lifecycle_goal` - Campaign lifecycle goals
+11. ✅ `campaign_lifecycle_goal` - Campaign lifecycle goals
 12. ✅ `campaign_shared_set` - Shared sets for campaigns
 13. ✅ `experiment` - Campaign experiments
-14. ✅ `experiment_arm` - Experiment arms/variants (NEWLY IMPLEMENTED)
+14. ✅ `experiment_arm` - Experiment arms/variants
 15. ✅ `smart_campaign_suggest` - Smart campaign suggestions
-16. ❌ `smart_campaign_setting` - Smart campaign settings
-17. ❌ `shareable_preview` - Shareable ad previews
+16. ✅ `smart_campaign_setting` - Smart campaign settings
+17. ✅ `shareable_preview` - Shareable ad previews
 
 ### Conversions (11 services)
 1. ✅ `conversion` (conversion_action in API) - Conversion actions
@@ -109,18 +110,18 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 4. ✅ `conversion_goal_campaign_config` - Campaign conversion goal configs (NEWLY IMPLEMENTED)
 5. ✅ `conversion_upload` - Upload conversions
 6. ✅ `conversion_value_rule` - Value rules for conversions
-7. ❌ `conversion_value_rule_set` - Value rule sets
-8. ✅ `custom_conversion_goal` - Custom conversion goals (NEWLY IMPLEMENTED)
-9. ✅ `customer_conversion_goal` - Customer-level conversion goals (NEWLY IMPLEMENTED)
-10. ❌ `customer_sk_ad_network_conversion_value_schema` - SK Ad Network schema
-11. ❌ `customer_lifecycle_goal` - Customer lifecycle goals
+7. ✅ `conversion_value_rule_set` - Value rule sets
+8. ✅ `custom_conversion_goal` - Custom conversion goals
+9. ✅ `customer_conversion_goal` - Customer-level conversion goals
+10. ✅ `customer_sk_ad_network_conversion_value_schema` - SK Ad Network schema
+11. ✅ `customer_lifecycle_goal` - Customer lifecycle goals
 
 ### Data Import & Jobs (5 services)
-1. ✅ `batch_job` - Batch job operations (NEWLY REGISTERED)
-2. ❌ `data_link` - Data link management
+1. ✅ `batch_job` - Batch job operations
+2. ✅ `data_link` - Data link management
 3. ✅ `offline_user_data_job` - Offline user data uploads
 4. ✅ `user_data` - User data operations
-5. ❌ `local_services_lead` - Local services lead data
+5. ✅ `local_services_lead` - Local services lead data
 
 ### Labels & Organization (4 services)
 1. ✅ `label` - Label management
@@ -142,14 +143,14 @@ Goal: 1:1 mapping of ALL Google Ads services with full type safety using generat
 6. ✅ `keyword_plan_idea` - Keyword ideas and research
 7. ✅ `reach_plan` - Reach planning
 8. ✅ `recommendation` - Optimization recommendations
-9. ❌ `recommendation_subscription` - Recommendation subscriptions
+9. ✅ `recommendation_subscription` - Recommendation subscriptions
 
 ### Product Integration (5 services)
 1. ✅ `brand_suggestion` - Brand suggestions (NEWLY IMPLEMENTED)
-2. ❌ `content_creator_insights` - YouTube creator insights
-3. ✅ `product_link` - Product link management (NEWLY IMPLEMENTED)
-4. ❌ `product_link_invitation` - Product link invitations
-5. ❌ `third_party_app_analytics_link` - Third-party analytics links
+2. ✅ `content_creator_insights` - YouTube creator insights
+3. ✅ `product_link` - Product link management
+4. ✅ `product_link_invitation` - Product link invitations
+5. ✅ `third_party_app_analytics_link` - Third-party analytics links
 
 ### Shared Resources (4 services)
 1. ✅ `shared_criterion` - Shared criteria
@@ -174,11 +175,11 @@ Services that implement ALL operations from the Google Ads API:
 10. ✅ `user_list_service` - mutate_user_lists (create, update, remove)
 
 ### Partially Implemented Services
-Services missing some operations:
+All previously partial services have been completed or clarified:
 
-1. ⚠️ `keyword_plan_service` - Missing: generate_forecast_curve, generate_forecast_time_series, generate_forecast_metrics
-2. ⚠️ `reach_plan_service` - Missing: generate_reach_forecast
-3. ⚠️ `recommendation_service` - Missing: dismiss_recommendation
+1. ✅ `keyword_plan_service` - generate_forecast_curve / generate_forecast_time_series / generate_forecast_metrics **do not exist in v20**. The v20 SDK exposes only `mutate_keyword_plans`. These were removed in earlier API versions.
+2. ✅ `reach_plan_service` - `generate_reach_forecast` implemented (2026-06-01). Supports multi-product forecasting with location, budget, duration, age range, and gender targeting.
+3. ✅ `recommendation_service` - `dismiss_recommendation` was already implemented and tested.
 
 ### Recent Enhancements (2026-03-22)
 

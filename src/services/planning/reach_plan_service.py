@@ -4,14 +4,24 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from fastmcp import Context, FastMCP
 from google.ads.googleads.errors import GoogleAdsException
+from google.ads.googleads.v20.common.types.criteria import GenderInfo
+from google.ads.googleads.v20.enums.types.gender_type import GenderTypeEnum
+from google.ads.googleads.v20.enums.types.reach_plan_age_range import (
+    ReachPlanAgeRangeEnum,
+)
 from google.ads.googleads.v20.services.services.reach_plan_service import (
     ReachPlanServiceClient,
 )
 from google.ads.googleads.v20.services.types.reach_plan_service import (
+    CampaignDuration,
+    GenerateReachForecastRequest,
+    GenerateReachForecastResponse,
     ListPlannableLocationsRequest,
     ListPlannableLocationsResponse,
     ListPlannableProductsRequest,
     ListPlannableProductsResponse,
+    PlannedProduct,
+    Targeting,
 )
 
 from src.sdk_client import get_sdk_client
@@ -154,32 +164,86 @@ class ReachPlanService:
             await ctx.log(level="error", message=error_msg)
             raise Exception(error_msg) from e
 
-    async def generate_basic_reach_forecast(
+    async def generate_reach_forecast(
         self,
         ctx: Context,
         customer_id: str,
         plannable_location_id: str,
-        currency_code: str,
-        budget_micros: int,
+        planned_products: List[Dict[str, Any]],
+        duration_days: int = 30,
+        currency_code: str = "USD",
+        min_effective_frequency: int = 1,
+        age_range: Optional[str] = None,
+        genders: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
-        """Generate a basic reach forecast (simplified version due to v20 limitations).
+        """Generate a reach forecast for a media plan.
 
         Args:
             ctx: FastMCP context
-            customer_id: The customer ID (can be with or without hyphens)
-            plannable_location_id: The plannable location ID
-            currency_code: The currency code (e.g., "USD")
-            budget_micros: Budget in micros
+            customer_id: The customer ID
+            plannable_location_id: Location ID from list_plannable_locations
+            planned_products: List of products to forecast, each with:
+                - plannable_product_code: Product code from list_plannable_products
+                - budget_micros: Budget in micros (e.g. 1_000_000_000 = $1000)
+            duration_days: Campaign duration in days (1–92)
+            currency_code: ISO 4217 currency code (e.g. "USD", "EUR")
+            min_effective_frequency: Minimum ad exposures per user to count as reached (1–10)
+            age_range: Optional age range (e.g. "AGE_RANGE_18_34", "AGE_RANGE_25_54")
+            genders: Optional genders to target (e.g. ["MALE", "FEMALE"])
 
         Returns:
-            Basic reach forecast information
+            Reach forecast with on_target_reach, total_reach, on_target_impressions,
+            total_impressions, and viewable_impressions per planned product.
         """
         try:
             customer_id = format_customer_id(customer_id)
 
-            # Note: GenerateReachForecastRequest requires complex types not available in v20
-            # This is a simplified implementation that returns basic information
-            raise NotImplementedError
+            # Build campaign duration
+            campaign_duration = CampaignDuration()
+            campaign_duration.duration_in_days = duration_days
+
+            # Build targeting
+            targeting = Targeting()
+            targeting.plannable_location_ids.append(plannable_location_id)
+
+            if age_range:
+                targeting.age_range = getattr(
+                    ReachPlanAgeRangeEnum.ReachPlanAgeRange, age_range
+                )
+
+            if genders:
+                for gender_str in genders:
+                    gender_info = GenderInfo()
+                    gender_info.type_ = getattr(GenderTypeEnum.GenderType, gender_str)
+                    targeting.genders.append(gender_info)
+
+            # Build planned products
+            products = []
+            for prod in planned_products:
+                planned_product = PlannedProduct()
+                planned_product.plannable_product_code = prod["plannable_product_code"]
+                planned_product.budget_micros = prod["budget_micros"]
+                products.append(planned_product)
+
+            # Build request
+            request = GenerateReachForecastRequest()
+            request.customer_id = customer_id
+            request.currency_code = currency_code
+            request.campaign_duration = campaign_duration
+            request.targeting = targeting
+            request.planned_products = products
+            request.min_effective_frequency = min_effective_frequency
+
+            response: GenerateReachForecastResponse = (
+                self.client.generate_reach_forecast(request=request)
+            )
+
+            await ctx.log(
+                level="info",
+                message=f"Generated reach forecast for {len(products)} product(s) in location {plannable_location_id}",
+            )
+
+            return serialize_proto_message(response)
 
         except GoogleAdsException as e:
             error_msg = format_ads_error(e)
@@ -228,37 +292,68 @@ def create_reach_plan_tools(
             plannable_location_id=plannable_location_id,
         )
 
-    async def generate_basic_reach_forecast(
+    async def generate_reach_forecast(
         ctx: Context,
         customer_id: str,
         plannable_location_id: str,
-        currency_code: str,
-        budget_micros: int,
+        planned_products: List[Dict[str, Any]],
+        duration_days: int = 30,
+        currency_code: str = "USD",
+        min_effective_frequency: int = 1,
+        age_range: Optional[str] = None,
+        genders: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
-        """Generate a basic reach forecast (simplified due to v20 limitations).
+        """Generate a reach forecast for a YouTube/video media plan.
+
+        Use list_plannable_locations to get plannable_location_id and
+        list_plannable_products to get available plannable_product_codes.
 
         Args:
-            customer_id: The customer ID (can be with or without hyphens)
-            plannable_location_id: The plannable location ID for the forecast
-            currency_code: Currency code (e.g., "USD", "EUR")
-            budget_micros: Budget in micros (e.g., 1000000 for $1)
+            customer_id: The customer ID
+            plannable_location_id: Location ID (e.g. "2840" for USA)
+            planned_products: List of products to include in the forecast, each with:
+                - plannable_product_code: Code from list_plannable_products
+                  (e.g. "TRUEVIEW_IN_STREAM", "BUMPER", "NON_SKIPPABLE_IN_STREAM")
+                - budget_micros: Budget in micros (e.g. 5_000_000_000 = $5000)
+            duration_days: Campaign duration in days, max 92 (default 30)
+            currency_code: ISO 4217 currency code (default "USD")
+            min_effective_frequency: Minimum exposures per user (1–10, default 1)
+            age_range: Optional age range filter, e.g.:
+                "AGE_RANGE_18_24", "AGE_RANGE_18_34", "AGE_RANGE_25_54",
+                "AGE_RANGE_35_65_UP" — see list_plannable_products for supported values
+            genders: Optional gender filter: ["MALE"], ["FEMALE"], or ["MALE", "FEMALE"]
 
         Returns:
-            Basic reach forecast information (simplified due to API limitations)
+            Forecast results including:
+            - reach_curve: Array of reach/frequency points across budget levels
+            - on_target_reach: Unique users reached within the targeted audience
+            - total_reach: Total unique users reached
+            - on_target_impressions: Impressions within targeted audience
+            - total_impressions: Total impressions
+            - viewable_impressions: Viewable impressions
+
+        Example:
+            planned_products=[
+                {"plannable_product_code": "TRUEVIEW_IN_STREAM", "budget_micros": 5000000000}
+            ]
         """
-        return await service.generate_basic_reach_forecast(
+        return await service.generate_reach_forecast(
             ctx=ctx,
             customer_id=customer_id,
             plannable_location_id=plannable_location_id,
+            planned_products=planned_products,
+            duration_days=duration_days,
             currency_code=currency_code,
-            budget_micros=budget_micros,
+            min_effective_frequency=min_effective_frequency,
+            age_range=age_range,
+            genders=genders,
         )
 
     tools.extend(
         [
             list_plannable_locations,
             list_plannable_products,
-            generate_basic_reach_forecast,
+            generate_reach_forecast,
         ]
     )
     return tools

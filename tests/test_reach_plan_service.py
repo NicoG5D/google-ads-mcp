@@ -9,6 +9,7 @@ from google.ads.googleads.v20.services.services.reach_plan_service import (
     ReachPlanServiceClient,
 )
 from google.ads.googleads.v20.services.types.reach_plan_service import (
+    GenerateReachForecastResponse,
     ListPlannableLocationsResponse,
     ListPlannableProductsResponse,
 )
@@ -187,30 +188,150 @@ async def test_list_plannable_products(
 
 
 @pytest.mark.asyncio
-async def test_generate_basic_reach_forecast_not_implemented(
+async def test_generate_reach_forecast_basic(
     reach_plan_service: ReachPlanService,
     mock_sdk_client: Any,
     mock_ctx: Context,
 ) -> None:
-    """Test that generate_basic_reach_forecast raises NotImplementedError."""
-    # Arrange
-    customer_id = "1234567890"
-    plannable_location_id = "2840"
-    currency_code = "USD"
-    budget_micros = 10000000  # $10
+    """Test generate_reach_forecast with minimal required parameters."""
+    mock_reach_plan_client = reach_plan_service.client  # type: ignore
+    mock_response = Mock(spec=GenerateReachForecastResponse)
+    mock_reach_plan_client.generate_reach_forecast.return_value = mock_response
 
-    # Act & Assert
-    with pytest.raises(Exception) as exc_info:
-        await reach_plan_service.generate_basic_reach_forecast(
+    expected = {"reach_curve": {"reach_forecasts": []}}
+    with patch(
+        "src.services.planning.reach_plan_service.serialize_proto_message",
+        return_value=expected,
+    ):
+        result = await reach_plan_service.generate_reach_forecast(
             ctx=mock_ctx,
-            customer_id=customer_id,
-            plannable_location_id=plannable_location_id,
-            currency_code=currency_code,
-            budget_micros=budget_micros,
+            customer_id="1234567890",
+            plannable_location_id="2840",
+            planned_products=[
+                {
+                    "plannable_product_code": "TRUEVIEW_IN_STREAM",
+                    "budget_micros": 5_000_000_000,
+                }
+            ],
+            duration_days=30,
+            currency_code="USD",
         )
 
-    # The service catches NotImplementedError and wraps it in an Exception
-    assert "Failed to generate reach forecast" in str(exc_info.value)
+    assert result == expected
+    mock_reach_plan_client.generate_reach_forecast.assert_called_once()
+
+    req = mock_reach_plan_client.generate_reach_forecast.call_args.kwargs["request"]
+    assert req.customer_id == "1234567890"
+    assert req.currency_code == "USD"
+    assert req.campaign_duration.duration_in_days == 30
+    assert req.min_effective_frequency == 1
+    assert "2840" in list(req.targeting.plannable_location_ids)
+    assert len(req.planned_products) == 1
+    assert req.planned_products[0].plannable_product_code == "TRUEVIEW_IN_STREAM"
+    assert req.planned_products[0].budget_micros == 5_000_000_000
+
+
+@pytest.mark.asyncio
+async def test_generate_reach_forecast_with_demographics(
+    reach_plan_service: ReachPlanService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+) -> None:
+    """Test generate_reach_forecast with age_range and gender targeting."""
+    mock_reach_plan_client = reach_plan_service.client  # type: ignore
+    mock_reach_plan_client.generate_reach_forecast.return_value = Mock(
+        spec=GenerateReachForecastResponse
+    )
+
+    with patch(
+        "src.services.planning.reach_plan_service.serialize_proto_message",
+        return_value={},
+    ):
+        await reach_plan_service.generate_reach_forecast(
+            ctx=mock_ctx,
+            customer_id="1234567890",
+            plannable_location_id="2840",
+            planned_products=[
+                {"plannable_product_code": "BUMPER", "budget_micros": 1_000_000_000}
+            ],
+            duration_days=14,
+            age_range="AGE_RANGE_18_34",
+            genders=["MALE", "FEMALE"],
+        )
+
+    req = mock_reach_plan_client.generate_reach_forecast.call_args.kwargs["request"]
+    assert req.campaign_duration.duration_in_days == 14
+    # age_range set
+    from google.ads.googleads.v20.enums.types.reach_plan_age_range import (
+        ReachPlanAgeRangeEnum,
+    )
+
+    assert (
+        req.targeting.age_range
+        == ReachPlanAgeRangeEnum.ReachPlanAgeRange.AGE_RANGE_18_34
+    )
+    # genders set
+    assert len(req.targeting.genders) == 2
+
+
+@pytest.mark.asyncio
+async def test_generate_reach_forecast_multiple_products(
+    reach_plan_service: ReachPlanService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+) -> None:
+    """Test generate_reach_forecast with multiple planned products."""
+    mock_reach_plan_client = reach_plan_service.client  # type: ignore
+    mock_reach_plan_client.generate_reach_forecast.return_value = Mock(
+        spec=GenerateReachForecastResponse
+    )
+
+    with patch(
+        "src.services.planning.reach_plan_service.serialize_proto_message",
+        return_value={},
+    ):
+        await reach_plan_service.generate_reach_forecast(
+            ctx=mock_ctx,
+            customer_id="1234567890",
+            plannable_location_id="2840",
+            planned_products=[
+                {
+                    "plannable_product_code": "TRUEVIEW_IN_STREAM",
+                    "budget_micros": 3_000_000_000,
+                },
+                {"plannable_product_code": "BUMPER", "budget_micros": 2_000_000_000},
+            ],
+        )
+
+    req = mock_reach_plan_client.generate_reach_forecast.call_args.kwargs["request"]
+    assert len(req.planned_products) == 2
+    codes = {p.plannable_product_code for p in req.planned_products}
+    assert codes == {"TRUEVIEW_IN_STREAM", "BUMPER"}
+
+
+@pytest.mark.asyncio
+async def test_generate_reach_forecast_google_ads_error(
+    reach_plan_service: ReachPlanService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    google_ads_exception: Any,
+) -> None:
+    """Test error handling when Google Ads API returns an error."""
+    mock_reach_plan_client = reach_plan_service.client  # type: ignore
+    mock_reach_plan_client.generate_reach_forecast.side_effect = google_ads_exception
+
+    with pytest.raises(Exception, match="Failed to generate reach forecast"):
+        await reach_plan_service.generate_reach_forecast(
+            ctx=mock_ctx,
+            customer_id="1234567890",
+            plannable_location_id="2840",
+            planned_products=[
+                {
+                    "plannable_product_code": "TRUEVIEW_IN_STREAM",
+                    "budget_micros": 1_000_000_000,
+                }
+            ],
+        )
 
 
 @pytest.mark.asyncio
@@ -293,7 +414,7 @@ def test_register_reach_plan_tools() -> None:
     expected_tools = [
         "list_plannable_locations",
         "list_plannable_products",
-        "generate_basic_reach_forecast",
+        "generate_reach_forecast",
     ]
 
     assert set(tool_names) == set(expected_tools)
