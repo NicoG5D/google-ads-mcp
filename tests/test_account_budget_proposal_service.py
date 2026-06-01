@@ -695,3 +695,20 @@ def test_register_account_budget_proposal_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_account_budget_proposal_basic_uses_default_customer_id(
+    account_budget_proposal_service: AccountBudgetProposalService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a basic account budget proposal."""
+    # Arrange
+    customer_id = None
+    proposal_type = AccountBudgetProposalTypeEnum.AccountBudgetProposalType.CREATE
+    billing_setup = "customers/1234567890/billingSetups/123456"
+    proposed_name = "Test Account Budget"
+    proposed_start_time_type = TimeTypeEnum.TimeType.NOW
+    proposed_spending_limit_type = SpendingLimitTypeEnum.SpendingLimitType.INFINITE

@@ -556,3 +556,17 @@ def test_register_campaign_draft_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_campaign_draft_uses_default_customer_id(
+    campaign_draft_service: CampaignDraftService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a campaign draft."""
+    # Arrange
+    customer_id = None
+    base_campaign = "customers/1234567890/campaigns/111222333"
+    draft_name = "Test Campaign Draft"

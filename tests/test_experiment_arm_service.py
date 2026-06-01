@@ -173,3 +173,13 @@ class TestExperimentArmService:
         # Verify
         assert isinstance(operation, ExperimentArmOperation)
         assert operation.remove == resource_name
+
+# --- default customer_id variant ---
+
+    def test_mutate_experiment_arms_uses_default_customer_id(
+        self, experiment_arm_service: Any, mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test mutating experiment arms"""
+        # Setup
+        customer_id = None
+        operations = [ExperimentArmOperation()]

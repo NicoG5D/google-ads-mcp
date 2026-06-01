@@ -171,3 +171,13 @@ class TestKeywordPlanAdGroupService:
         # Verify
         assert isinstance(operation, KeywordPlanAdGroupOperation)
         assert operation.remove == resource_name
+
+# --- default customer_id variant ---
+
+    def test_mutate_keyword_plan_ad_groups_uses_default_customer_id(
+        self, keyword_plan_ad_group_service: Any, mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test mutating keyword plan ad groups"""
+        # Setup
+        customer_id = None
+        operations = [KeywordPlanAdGroupOperation()]

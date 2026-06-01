@@ -643,3 +643,30 @@ def test_register_conversion_upload_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_upload_click_conversions_basic_uses_default_customer_id(
+    conversion_upload_service: ConversionUploadService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test uploading basic click conversions."""
+    # Arrange
+    customer_id = None
+    conversions = [
+        {
+            "gclid": "gclid123",
+            "conversion_action_id": "456",
+            "conversion_date_time": "2024-01-15 10:30:00-08:00",
+            "conversion_value": 29.99,
+            "currency_code": "USD",
+            "order_id": "order123",
+        },
+        {
+            "gclid": "gclid456",
+            "conversion_action_id": "789",
+            "conversion_date_time": "2024-01-16 14:45:00-08:00",
+        },
+    ]

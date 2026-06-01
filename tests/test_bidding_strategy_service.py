@@ -555,3 +555,18 @@ def test_register_bidding_strategy_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_target_cpa_strategy_uses_default_customer_id(
+    bidding_strategy_service: BiddingStrategyService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a Target CPA bidding strategy."""
+    # Arrange
+    customer_id = None
+    name = "Test Target CPA Strategy"
+    target_cpa_micros = 50000000  # $50.00
+    status = "ENABLED"

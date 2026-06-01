@@ -7,7 +7,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.sdk_client import GoogleAdsSdkClient
+from src.sdk_client import GoogleAdsSdkClient, get_default_customer_id
+from src.utils import resolve_customer_id
 
 
 @pytest.fixture
@@ -62,3 +63,64 @@ def test_close_clears_client(mock_google_ads_client: MagicMock) -> None:
         client.close()
         _ = client.client
         assert load_env.call_count == 2
+
+
+# ---------------------------------------------------------------------------
+# get_default_customer_id
+# ---------------------------------------------------------------------------
+
+
+def test_get_default_customer_id_returns_env_var(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GOOGLE_ADS_CUSTOMER_ID", "123-456-7890")
+    assert get_default_customer_id() == "1234567890"
+
+
+def test_get_default_customer_id_returns_none_when_unset(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("GOOGLE_ADS_CUSTOMER_ID", raising=False)
+    assert get_default_customer_id() is None
+
+
+def test_get_default_customer_id_returns_none_when_empty(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GOOGLE_ADS_CUSTOMER_ID", "")
+    assert get_default_customer_id() is None
+
+
+# ---------------------------------------------------------------------------
+# resolve_customer_id
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_customer_id_explicit_strips_hyphens() -> None:
+    assert resolve_customer_id("123-456-7890") == "1234567890"
+
+
+def test_resolve_customer_id_explicit_no_hyphens() -> None:
+    assert resolve_customer_id("1234567890") == "1234567890"
+
+
+def test_resolve_customer_id_none_uses_env_var(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GOOGLE_ADS_CUSTOMER_ID", "1234567890")
+    assert resolve_customer_id(None) == "1234567890"
+
+
+def test_resolve_customer_id_none_env_var_strips_hyphens(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GOOGLE_ADS_CUSTOMER_ID", "123-456-7890")
+    assert resolve_customer_id(None) == "1234567890"
+
+
+def test_resolve_customer_id_none_raises_when_no_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("GOOGLE_ADS_CUSTOMER_ID", raising=False)
+    with pytest.raises(ValueError, match="customer_id is required"):
+        resolve_customer_id(None)

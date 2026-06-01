@@ -546,3 +546,19 @@ def test_register_user_list_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_basic_user_list_uses_default_customer_id(
+    user_list_service: UserListService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a basic user list."""
+    # Arrange
+    customer_id = None
+    name = "Test Basic User List"
+    description = "A test user list"
+    membership_life_span = 30
+    membership_status = "OPEN"

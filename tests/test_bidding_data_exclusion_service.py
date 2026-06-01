@@ -616,3 +616,23 @@ def test_register_bidding_data_exclusion_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_bidding_data_exclusion_customer_scope_uses_default_customer_id(
+    bidding_data_exclusion_service: BiddingDataExclusionService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a customer-scoped bidding data exclusion."""
+    # Arrange
+    customer_id = None
+    name = "Holiday Exclusion"
+    scope = "CUSTOMER"
+    start_date_time = "2024-12-24 00:00:00"
+    end_date_time = "2024-12-26 23:59:59"
+    status = "ENABLED"
+    description = "Exclude holiday period from bidding data"
+    advertising_channel_types = ["SEARCH", "DISPLAY"]
+    devices = ["MOBILE", "DESKTOP"]

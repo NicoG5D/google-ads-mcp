@@ -470,3 +470,17 @@ def test_register_ad_group_label_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_apply_label_to_ad_group_uses_default_customer_id(
+    ad_group_label_service: AdGroupLabelService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test applying a label to an ad group."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "111"
+    label_id = "999"

@@ -604,3 +604,18 @@ def test_register_campaign_shared_set_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_attach_shared_set_to_campaign_uses_default_customer_id(
+    campaign_shared_set_service: CampaignSharedSetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test attaching a shared set to a campaign."""
+    # Arrange
+    customer_id = None
+    campaign_id = "111222333"
+    shared_set_id = "444555666"
+    status = "ENABLED"

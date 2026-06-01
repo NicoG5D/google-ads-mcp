@@ -537,3 +537,18 @@ def test_register_ad_group_bid_modifier_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_device_bid_modifier_uses_default_customer_id(
+    ad_group_bid_modifier_service: AdGroupBidModifierService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a device bid modifier."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "111"
+    device_type = "MOBILE"
+    bid_modifier = 1.2

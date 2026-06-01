@@ -305,3 +305,19 @@ def test_register_budget_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_campaign_budget_uses_default_customer_id(
+    budget_service: BudgetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a campaign budget."""
+    # Arrange
+    customer_id = None
+    name = "Test Budget"
+    amount_micros = 10000000  # $10.00
+    delivery_method = "STANDARD"
+    explicitly_shared = True

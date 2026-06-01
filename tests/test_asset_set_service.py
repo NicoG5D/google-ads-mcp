@@ -589,3 +589,18 @@ def test_register_asset_set_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_asset_set_uses_default_customer_id(
+    asset_set_service: AssetSetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an asset set."""
+    # Arrange
+    customer_id = None
+    name = "Test Asset Set"
+    asset_set_type = AssetSetTypeEnum.AssetSetType.MERCHANT_CENTER_FEED
+    status = AssetSetStatusEnum.AssetSetStatus.ENABLED

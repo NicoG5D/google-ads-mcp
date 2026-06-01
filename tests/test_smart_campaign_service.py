@@ -346,3 +346,16 @@ def test_register_smart_campaign_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_suggest_budget_options_existing_campaign_uses_default_customer_id(
+    smart_campaign_service: SmartCampaignService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test suggesting budget options for an existing campaign."""
+    # Arrange
+    customer_id = None
+    campaign_id = "111222333"

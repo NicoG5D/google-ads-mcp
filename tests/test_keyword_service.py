@@ -549,3 +549,22 @@ def test_register_keyword_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_add_keywords_uses_default_customer_id(
+    keyword_service: KeywordService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test adding keywords to an ad group."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "9876543210"
+    keywords: List[Dict[str, Any]] = [
+        {"text": "running shoes", "match_type": "EXACT"},
+        {"text": "athletic footwear", "match_type": "PHRASE"},
+        {"text": "sports shoes", "match_type": "BROAD", "cpc_bid_micros": 1500000},
+    ]
+    default_cpc_bid_micros = 1000000  # $1.00

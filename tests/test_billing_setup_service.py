@@ -722,3 +722,20 @@ def test_register_billing_setup_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_billing_setup_uses_default_customer_id(
+    billing_setup_service: BillingSetupService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a billing setup."""
+    # Arrange
+    customer_id = None
+    payments_account_id = "987654321"
+    start_date = "2024-01-01"
+    end_date = "2024-12-31"
+    start_time_type = TimeTypeEnum.TimeType.NOW
+    end_time_type = TimeTypeEnum.TimeType.FOREVER

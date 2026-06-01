@@ -194,6 +194,12 @@ def create_mock_mutate_response(
     return response
 
 
+@pytest.fixture
+def mock_default_customer_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Set GOOGLE_ADS_CUSTOMER_ID env var so customer_id=None resolves to TEST_CUSTOMER_ID."""
+    monkeypatch.setenv("GOOGLE_ADS_CUSTOMER_ID", "1234567890")
+
+
 # Common test data
 TEST_CUSTOMER_ID = "1234567890"
 TEST_CAMPAIGN_ID = "111222333"

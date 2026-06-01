@@ -334,3 +334,17 @@ def test_register_search_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_search_campaigns_uses_default_customer_id(
+    search_service: SearchService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test searching for campaigns."""
+    # Arrange
+    customer_id = None
+    include_removed = False
+    limit = 10

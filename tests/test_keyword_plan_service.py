@@ -444,3 +444,17 @@ def test_register_keyword_plan_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_keyword_plan_uses_default_customer_id(
+    keyword_plan_service: KeywordPlanService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a keyword plan."""
+    # Arrange
+    customer_id = None
+    name = "Test Keyword Plan"
+    forecast_period_days = 30

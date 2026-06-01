@@ -565,3 +565,30 @@ def test_register_ad_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_responsive_search_ad_uses_default_customer_id(
+    ad_service: AdService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a responsive search ad."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "9876543210"
+    headlines = [
+        "Best Running Shoes",
+        "Premium Athletic Footwear",
+        "Top Quality Sports Shoes",
+        "Comfortable Running Gear",
+    ]
+    descriptions = [
+        "Discover our premium collection of running shoes with superior comfort.",
+        "Get the best performance with our top-rated athletic footwear.",
+    ]
+    final_urls = ["https://example.com/running-shoes"]
+    path1 = "shoes"
+    path2 = "running"
+    status = AdGroupAdStatusEnum.AdGroupAdStatus.PAUSED

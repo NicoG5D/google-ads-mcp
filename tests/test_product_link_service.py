@@ -168,3 +168,13 @@ class TestProductLinkService:
         request = call_args.kwargs["request"]
         assert request.customer_id == customer_id
         assert request.product_link.data_partner.data_partner_id == data_partner_id
+
+# --- default customer_id variant ---
+
+    def test_create_product_link_uses_default_customer_id(
+        self, product_link_service: Any, mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test creating a product link"""
+        # Setup
+        customer_id = None
+        product_link = ProductLink()

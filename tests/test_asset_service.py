@@ -578,3 +578,17 @@ def test_register_asset_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_text_asset_uses_default_customer_id(
+    asset_service: AssetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a text asset."""
+    # Arrange
+    customer_id = None
+    text = "This is a test headline"
+    name = "Test Text Asset"

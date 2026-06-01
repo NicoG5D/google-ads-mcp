@@ -496,3 +496,18 @@ def test_register_invoice_tools() -> None:
     expected_tools = ["list_invoices"]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_list_invoices_uses_default_customer_id(
+    invoice_service: InvoiceService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test listing invoices."""
+    # Arrange
+    customer_id = None
+    billing_setup = "customers/1234567890/billingSetups/999888777"
+    issue_year = "2024"
+    issue_month = MonthOfYearEnum.MonthOfYear.JANUARY

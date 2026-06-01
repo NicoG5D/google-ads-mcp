@@ -150,3 +150,15 @@ class TestKeywordPlanCampaignKeywordService:
         # Verify
         assert isinstance(operation, KeywordPlanCampaignKeywordOperation)
         assert operation.remove == resource_name
+
+# --- default customer_id variant ---
+
+    def test_mutate_keyword_plan_campaign_keywords_uses_default_customer_id(
+        self,
+        keyword_plan_campaign_keyword_service: Any,
+        mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test mutating keyword plan campaign keywords"""
+        # Setup
+        customer_id = None
+        operations = [KeywordPlanCampaignKeywordOperation()]

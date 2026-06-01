@@ -576,3 +576,19 @@ def test_register_audience_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_combined_audience_with_age_uses_default_customer_id(
+    audience_service: AudienceService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a combined audience with age dimension."""
+    # Arrange
+    customer_id = None
+    name = "Young Adults Audience"
+    description = "Audience targeting 18-34 age range"
+    dimensions = [{"type": "AGE", "age_ranges": ["AGE_RANGE_18_24", "AGE_RANGE_25_34"]}]
+    status = "ENABLED"

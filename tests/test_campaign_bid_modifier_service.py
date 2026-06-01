@@ -476,3 +476,18 @@ def test_register_campaign_bid_modifier_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_interaction_type_bid_modifier_uses_default_customer_id(
+    campaign_bid_modifier_service: CampaignBidModifierService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an interaction type bid modifier."""
+    # Arrange
+    customer_id = None
+    campaign_id = "111222333"
+    interaction_type = InteractionTypeEnum.InteractionType.CALLS
+    bid_modifier = 1.25

@@ -399,3 +399,18 @@ def test_register_recommendation_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_get_recommendations_uses_default_customer_id(
+    recommendation_service: RecommendationService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test getting recommendations."""
+    # Arrange
+    customer_id = None
+    types = ["CAMPAIGN_BUDGET", "KEYWORD"]
+    campaign_ids = ["111", "222"]
+    limit = 10

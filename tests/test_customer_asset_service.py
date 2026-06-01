@@ -285,3 +285,26 @@ class TestCustomerAssetMCPServer:
 
     async def test_update_customer_asset_status_tool(self) -> None:
         pytest.skip("MCP tool integration not implemented in CI")
+
+# --- default customer_id variant ---
+
+    def test_mutate_customer_assets_success_uses_default_customer_id(self, service: Any, mock_client: Any,
+    mock_default_customer_id: None,):
+        """Test successful customer assets mutation."""
+        # Arrange
+        customer_id = None
+        operations = [
+            service.create_customer_asset_operation(
+                asset="customers/1234567890/assets/123",
+                field_type=AssetFieldTypeEnum.AssetFieldType.LOGO,
+                status=AssetLinkStatusEnum.AssetLinkStatus.ENABLED,
+            )
+        ]
+        expected_response = MutateCustomerAssetsResponse(
+            results=[
+                MutateCustomerAssetResult(
+                    resource_name="customers/1234567890/customerAssets/123~LOGO"
+                )
+            ]
+        )
+        mock_client.mutate_customer_assets.return_value = expected_response  # type: ignore

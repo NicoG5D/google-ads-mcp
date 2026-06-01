@@ -636,3 +636,25 @@ def test_register_custom_audience_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_custom_audience_uses_default_customer_id(
+    custom_audience_service: CustomAudienceService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a custom audience."""
+    # Arrange
+    customer_id = None
+    name = "Technology Enthusiasts"
+    description = "People interested in tech products and innovations"
+    members = [
+        {"type": "KEYWORD", "keyword": "artificial intelligence"},
+        {"type": "KEYWORD", "keyword": "machine learning"},
+        {"type": "URL", "url": "techcrunch.com"},
+        {"type": "APP", "app": "com.example.techapp"},
+    ]
+    type_ = "AUTO"
+    status = "ENABLED"

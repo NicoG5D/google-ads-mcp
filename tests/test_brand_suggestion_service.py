@@ -106,3 +106,14 @@ class TestBrandSuggestionService:
         assert request.customer_id == customer_id
         assert request.brand_prefix == brand_prefix
         assert request.selected_brands == []
+
+# --- default customer_id variant ---
+
+    def test_suggest_brands_uses_default_customer_id(
+        self, brand_suggestion_service: Any, mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test suggesting brands"""
+        # Setup
+        customer_id = None
+        brand_prefix = "nike"
+        selected_brands = ["brand123"]

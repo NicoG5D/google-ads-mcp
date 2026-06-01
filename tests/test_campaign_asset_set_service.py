@@ -289,3 +289,25 @@ class TestCampaignAssetSetMCPServer:
 
     async def test_link_multiple_asset_sets_to_campaign_tool(self) -> None:
         pytest.skip("MCP tool integration not implemented in CI")
+
+# --- default customer_id variant ---
+
+    def test_mutate_campaign_asset_sets_success_uses_default_customer_id(self, service: Any, mock_client: Any,
+    mock_default_customer_id: None,):
+        """Test successful campaign asset sets mutation."""
+        # Arrange
+        customer_id = None
+        operations = [
+            service.create_campaign_asset_set_operation(
+                campaign="customers/1234567890/campaigns/1",
+                asset_set="customers/1234567890/assetSets/1",
+            )
+        ]
+        expected_response = MutateCampaignAssetSetsResponse(
+            results=[
+                MutateCampaignAssetSetResult(
+                    resource_name="customers/1234567890/campaignAssetSets/123~456"
+                )
+            ]
+        )
+        mock_client.mutate_campaign_asset_sets.return_value = expected_response  # type: ignore

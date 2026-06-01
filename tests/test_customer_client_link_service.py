@@ -589,3 +589,18 @@ def test_register_customer_client_link_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_customer_client_link_uses_default_customer_id(
+    customer_client_link_service: CustomerClientLinkService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a customer client link."""
+    # Arrange
+    customer_id = None
+    client_customer = "customers/987654321"
+    status = ManagerLinkStatusEnum.ManagerLinkStatus.PENDING
+    hidden = False

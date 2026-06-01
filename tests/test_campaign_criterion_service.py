@@ -593,3 +593,19 @@ def test_register_campaign_criterion_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_add_location_criteria_uses_default_customer_id(
+    campaign_criterion_service: CampaignCriterionService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test adding location criteria to a campaign."""
+    # Arrange
+    customer_id = None
+    campaign_id = "9876543210"
+    location_ids = ["1014044", "1007734"]  # California, Arizona
+    negative = False
+    bid_modifier = 1.2

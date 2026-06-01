@@ -883,3 +883,22 @@ def test_register_ad_group_criterion_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_add_keywords_uses_default_customer_id(
+    ad_group_criterion_service: AdGroupCriterionService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test adding keyword criteria to an ad group."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "9876543210"
+    keywords = [
+        {"text": "running shoes", "match_type": "EXACT", "cpc_bid_micros": 1000000},
+        {"text": "athletic footwear", "match_type": "PHRASE", "cpc_bid_micros": 800000},
+        {"text": "sports shoes", "match_type": "BROAD"},
+    ]
+    negative = False

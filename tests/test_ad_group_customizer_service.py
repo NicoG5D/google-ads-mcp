@@ -366,3 +366,11 @@ class TestAdGroupCustomizerService:
 
 
 # Server tests removed - server architecture has changed
+
+# --- default customer_id variant ---
+
+    def test_mutate_ad_group_customizers_success_uses_default_customer_id(self, service: Any, mock_client: Any,
+    mock_default_customer_id: None,):
+        """Test successful ad group customizers mutation."""
+        # Arrange
+        customer_id = None

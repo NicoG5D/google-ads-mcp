@@ -564,3 +564,19 @@ def test_register_ad_group_asset_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_link_asset_to_ad_group_uses_default_customer_id(
+    ad_group_asset_service: AdGroupAssetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test linking an asset to an ad group."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "111"
+    asset_id = "999"
+    field_type = "HEADLINE"
+    status = "ENABLED"

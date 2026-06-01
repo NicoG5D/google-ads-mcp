@@ -469,3 +469,16 @@ def test_register_remarketing_action_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_remarketing_action_uses_default_customer_id(
+    remarketing_action_service: RemarketingActionService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a remarketing action."""
+    # Arrange
+    customer_id = None
+    name = "Website Visitors"

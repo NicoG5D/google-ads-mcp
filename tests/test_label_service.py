@@ -348,3 +348,18 @@ def test_register_label_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_label_uses_default_customer_id(
+    label_service: LabelService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a label."""
+    # Arrange
+    customer_id = None
+    name = "Test Label"
+    description = "This is a test label"
+    background_color = "#FF0000"

@@ -458,3 +458,17 @@ def test_register_customer_user_access_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_update_user_access_uses_default_customer_id(
+    customer_user_access_service: CustomerUserAccessService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test updating user access permissions."""
+    # Arrange
+    customer_id = None
+    user_access_resource_name = "customers/1234567890/customerUserAccesses/111222333"
+    new_access_role = AccessRoleEnum.AccessRole.READ_ONLY

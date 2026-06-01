@@ -444,3 +444,18 @@ def test_register_ad_group_ad_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_ad_group_ad_uses_default_customer_id(
+    ad_group_ad_service: AdGroupAdService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an ad group ad."""
+    # Arrange
+    customer_id = None
+    ad_group_id = "9876543210"
+    ad_resource_name = f"customers/{customer_id}/ads/456"
+    status = AdGroupAdStatusEnum.AdGroupAdStatus.ENABLED

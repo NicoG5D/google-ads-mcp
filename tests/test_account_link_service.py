@@ -590,3 +590,19 @@ def test_register_account_link_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_account_link_uses_default_customer_id(
+    account_link_service: AccountLinkService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an account link."""
+    # Arrange
+    customer_id = None
+    app_analytics_provider_id = 123456
+    app_id = "com.example.app"
+    app_vendor = MobileAppVendorEnum.MobileAppVendor.GOOGLE_APP_STORE
+    status = AccountLinkStatusEnum.AccountLinkStatus.ENABLED

@@ -506,3 +506,15 @@ def test_register_batch_job_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_batch_job_uses_default_customer_id(
+    batch_job_service: BatchJobService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a batch job."""
+    # Arrange
+    customer_id = None

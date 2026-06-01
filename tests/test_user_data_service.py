@@ -434,3 +434,49 @@ def test_register_user_data_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_upload_enhanced_conversions_uses_default_customer_id(
+    user_data_service: UserDataService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test uploading enhanced conversions."""
+    # Arrange
+    customer_id = None
+    conversion_adjustments = [
+        {
+            "user_identifiers": [
+                {"hashed_email": "a1b2c3d4e5f6"},
+                {"hashed_phone_number": "123456789"},
+            ],
+            "transaction_attribute": {
+                "conversion_action": f"customers/{customer_id}/conversionActions/456",
+                "currency_code": "USD",
+                "transaction_amount_micros": 50000000,  # $50
+                "transaction_date_time": "2024-01-15 10:30:00",
+                "order_id": "ORDER123",
+            },
+        },
+        {
+            "user_identifiers": [
+                {
+                    "address_info": {
+                        "hashed_first_name": "john123",
+                        "hashed_last_name": "doe456",
+                        "country_code": "US",
+                        "postal_code": "12345",
+                    }
+                }
+            ],
+            "transaction_attribute": {
+                "conversion_action": f"customers/{customer_id}/conversionActions/456",
+                "currency_code": "USD",
+                "transaction_amount_micros": 100000000,  # $100
+                "transaction_date_time": "2024-01-16 14:20:00",
+                "order_id": "ORDER456",
+            },
+        },
+    ]

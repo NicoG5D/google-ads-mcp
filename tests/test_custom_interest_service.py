@@ -635,3 +635,25 @@ def test_register_custom_interest_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_custom_interest_uses_default_customer_id(
+    custom_interest_service: CustomInterestService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a custom interest."""
+    # Arrange
+    customer_id = None
+    name = "Tech Enthusiasts"
+    description = "People interested in technology and gadgets"
+    members = [
+        {"type": "KEYWORD", "value": "artificial intelligence"},
+        {"type": "KEYWORD", "value": "machine learning"},
+        {"type": "URL", "value": "techcrunch.com"},
+        {"type": "URL", "value": "wired.com"},
+    ]
+    type_ = "CUSTOM_AFFINITY"
+    status = "ENABLED"

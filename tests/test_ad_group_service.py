@@ -294,3 +294,18 @@ def test_register_ad_group_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_ad_group_uses_default_customer_id(
+    ad_group_service: AdGroupService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an ad group."""
+    # Arrange
+    customer_id = None
+    campaign_id = "9876543210"
+    name = "Test Ad Group"
+    cpc_bid_micros = 1000000  # $1.00

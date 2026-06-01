@@ -731,3 +731,18 @@ def test_register_shared_set_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_shared_set_uses_default_customer_id(
+    shared_set_service: SharedSetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a shared set."""
+    # Arrange
+    customer_id = None
+    name = "Test Negative Keywords"
+    type_enum = SharedSetTypeEnum.SharedSetType.NEGATIVE_KEYWORDS
+    status_enum = SharedSetStatusEnum.SharedSetStatus.ENABLED

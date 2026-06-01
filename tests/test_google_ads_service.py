@@ -263,6 +263,8 @@ class TestGoogleAdsService:
         error = make_google_ads_exception_stub()
         mock_error = Mock()
         mock_error.message = "Invalid query"
+        mock_error.error_code = None  # skip error_code branch in format_ads_error
+        mock_error.location = None
         error.failure = Mock()  # type: ignore
         error.failure.errors = [mock_error]  # type: ignore
         error.request_id = "test-req-id"  # type: ignore

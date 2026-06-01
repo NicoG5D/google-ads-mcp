@@ -567,3 +567,21 @@ def test_register_campaign_tools() -> None:
     registered_tools = [call[0][0] for call in mock_mcp.tool.call_args_list]  # type: ignore
     tool_names = [tool.__name__ for tool in registered_tools]
     assert set(tool_names) == {"create_campaign", "update_campaign"}
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_campaign_portfolio_requires_resource_name_uses_default_customer_id(
+    campaign_service: CampaignService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test that PORTFOLIO bidding fails without a resource name."""
+    with pytest.raises(Exception, match="bidding_strategy_resource_name is required"):
+        await campaign_service.create_campaign(
+            ctx=mock_ctx,
+            customer_id=None,
+            name="Bad Portfolio",
+            budget_resource_name="customers/1234567890/campaignBudgets/987654321",
+            bidding_strategy_type="PORTFOLIO",
+        )

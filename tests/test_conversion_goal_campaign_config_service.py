@@ -112,3 +112,15 @@ class TestConversionGoalCampaignConfigService:
         assert operation.update.resource_name == resource_name
         assert operation.update.goal_config_level == goal_config_level
         assert operation.update_mask.paths == ["goal_config_level"]
+
+# --- default customer_id variant ---
+
+    def test_mutate_conversion_goal_campaign_configs_uses_default_customer_id(
+        self,
+        conversion_goal_campaign_config_service: Any,
+        mock_service_client: Any,
+    mock_default_customer_id: None,):
+        """Test mutating conversion goal campaign configs"""
+        # Setup
+        customer_id = None
+        operations = [ConversionGoalCampaignConfigOperation()]

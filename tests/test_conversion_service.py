@@ -492,3 +492,27 @@ def test_register_conversion_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_conversion_action_uses_default_customer_id(
+    conversion_service: ConversionService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating a conversion action."""
+    # Arrange
+    customer_id = None
+    name = "Test Conversion Action"
+    category = "PURCHASE"
+    type = "WEBPAGE"
+    status = "ENABLED"
+    value_settings = {
+        "default_value": 50.0,
+        "always_use_default_value": False,
+    }
+    counting_type = "ONE_PER_CLICK"
+    attribution_model = "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+    click_through_lookback_window_days = 30
+    view_through_lookback_window_days = 1

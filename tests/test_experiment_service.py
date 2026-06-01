@@ -635,3 +635,21 @@ def test_register_experiment_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_experiment_uses_default_customer_id(
+    experiment_service: ExperimentService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an experiment."""
+    # Arrange
+    customer_id = None
+    name = "Test Experiment"
+    description = "Test experiment description"
+    suffix = "[experiment]"
+    experiment_type = "SEARCH_CUSTOM"
+    start_date = "2024-01-01"
+    end_date = "2024-12-31"

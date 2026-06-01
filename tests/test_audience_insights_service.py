@@ -553,3 +553,23 @@ def test_register_audience_insights_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_generate_insights_finder_report_uses_default_customer_id(
+    audience_insights_service: AudienceInsightsService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test generating insights finder report."""
+    # Arrange
+    customer_id = None
+    baseline_audience_countries = ["2840"]  # US
+    specific_audience_countries = ["2840", "2124"]  # US and Canada
+    dimensions = ["AGE_RANGE", "GENDER", "USER_INTEREST"]
+    baseline_audience_ages = ["AGE_RANGE_25_34", "AGE_RANGE_35_44"]
+    baseline_audience_genders = ["MALE", "FEMALE"]
+    specific_audience_ages = ["AGE_RANGE_18_24", "AGE_RANGE_25_34"]
+    specific_audience_genders = ["FEMALE"]
+    specific_audience_user_interests = ["12345", "67890"]

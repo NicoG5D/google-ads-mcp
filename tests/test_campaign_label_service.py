@@ -423,3 +423,17 @@ def test_register_campaign_label_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_apply_label_to_campaign_uses_default_customer_id(
+    campaign_label_service: CampaignLabelService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test applying a label to a campaign."""
+    # Arrange
+    customer_id = None
+    campaign_id = "111222333"
+    label_id = "444555666"

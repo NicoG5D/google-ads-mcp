@@ -550,3 +550,21 @@ def test_register_asset_group_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_create_asset_group_uses_default_customer_id(
+    asset_group_service: AssetGroupService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test creating an asset group."""
+    # Arrange
+    customer_id = None
+    campaign_id = "111"
+    name = "Test Asset Group"
+    final_urls = ["https://example.com", "https://example.com/page2"]
+    final_mobile_urls = ["https://m.example.com"]
+    path1 = "shoes"
+    path2 = "running"

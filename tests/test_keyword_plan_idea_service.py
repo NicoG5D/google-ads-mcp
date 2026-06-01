@@ -413,3 +413,18 @@ def test_register_keyword_plan_idea_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_generate_keyword_ideas_from_keywords_uses_default_customer_id(
+    keyword_plan_idea_service: KeywordPlanIdeaService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test generating keyword ideas from keywords."""
+    # Arrange
+    customer_id = None
+    keywords = ["running shoes", "athletic footwear"]
+    language = "languageConstants/1000"
+    geo_target_constants = ["geoTargetConstants/2840"]  # US

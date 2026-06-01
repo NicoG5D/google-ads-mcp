@@ -692,3 +692,18 @@ def test_register_campaign_asset_tools() -> None:
     ]
 
     assert set(tool_names) == set(expected_tools)
+
+# --- default customer_id variant ---
+
+@pytest.mark.asyncio
+async def test_link_asset_to_campaign_uses_default_customer_id(
+    campaign_asset_service: CampaignAssetService,
+    mock_sdk_client: Any,
+    mock_ctx: Context,
+    mock_default_customer_id: None,) -> None:
+    """Test linking an asset to a campaign."""
+    # Arrange
+    customer_id = None
+    campaign_id = "9876543210"
+    asset_id = "555666777"
+    field_type = AssetFieldTypeEnum.AssetFieldType.SITELINK
