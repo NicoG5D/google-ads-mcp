@@ -24,7 +24,7 @@ from src.utils import (
     RATE_LIMIT_MSG,
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     ensure_list,
     is_resource_exhausted,
@@ -54,7 +54,8 @@ class KeywordPlanIdeaService:
     async def generate_keyword_ideas_from_keywords(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[str],
         language: str,
         geo_target_constants: List[str],
@@ -79,7 +80,7 @@ class KeywordPlanIdeaService:
             List of keyword ideas with metrics
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Create request
             request = GenerateKeywordIdeasRequest()
             request.customer_id = customer_id
@@ -132,7 +133,8 @@ class KeywordPlanIdeaService:
     async def generate_keyword_ideas_from_url(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         page_url: str,
         language: str,
         geo_target_constants: List[str],
@@ -157,7 +159,7 @@ class KeywordPlanIdeaService:
             List of keyword ideas with metrics
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Create request
             request = GenerateKeywordIdeasRequest()
             request.customer_id = customer_id
@@ -209,7 +211,8 @@ class KeywordPlanIdeaService:
     async def generate_keyword_ideas_from_site(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         site_url: str,
         language: str,
         geo_target_constants: List[str],
@@ -234,7 +237,7 @@ class KeywordPlanIdeaService:
             List of keyword ideas with metrics
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Create request
             request = GenerateKeywordIdeasRequest()
             request.customer_id = customer_id
@@ -286,7 +289,8 @@ class KeywordPlanIdeaService:
     async def generate_keyword_ideas_from_keywords_and_url(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[str],
         page_url: str,
         language: str,
@@ -313,7 +317,7 @@ class KeywordPlanIdeaService:
             List of keyword ideas with metrics
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Create request
             request = GenerateKeywordIdeasRequest()
             request.customer_id = customer_id
@@ -427,7 +431,8 @@ def create_keyword_plan_idea_tools(
 
     async def generate_keyword_ideas_from_keywords(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[str],
         language: str,
         geo_target_constants: List[str],
@@ -479,7 +484,8 @@ def create_keyword_plan_idea_tools(
 
     async def generate_keyword_ideas_from_url(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         page_url: str,
         language: str,
         geo_target_constants: List[str],
@@ -529,7 +535,8 @@ def create_keyword_plan_idea_tools(
 
     async def generate_keyword_ideas_from_site(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         site_url: str,
         language: str,
         geo_target_constants: List[str],
@@ -579,7 +586,8 @@ def create_keyword_plan_idea_tools(
 
     async def generate_keyword_ideas_from_keywords_and_url(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[str],
         page_url: str,
         language: str,

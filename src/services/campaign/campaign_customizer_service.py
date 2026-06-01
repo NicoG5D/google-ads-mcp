@@ -27,7 +27,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -60,7 +60,8 @@ class CampaignCustomizerService:
     async def create_campaign_customizer(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         customizer_attribute_id: str,
         value: str,
@@ -89,7 +90,7 @@ class CampaignCustomizerService:
             Created campaign customizer details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
             attribute_resource = f"customers/{customer_id}/customizerAttributes/{customizer_attribute_id}"
 
@@ -143,7 +144,8 @@ class CampaignCustomizerService:
     async def remove_campaign_customizer(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         customizer_attribute_id: str,
         partial_failure: bool = False,
@@ -163,7 +165,7 @@ class CampaignCustomizerService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Construct resource name using the ~ delimiter format
             resource_name = (
@@ -213,7 +215,8 @@ def create_campaign_customizer_tools(
 
     async def create_campaign_customizer(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         customizer_attribute_id: str,
         value: str,
@@ -277,7 +280,8 @@ def create_campaign_customizer_tools(
 
     async def remove_campaign_customizer(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         customizer_attribute_id: str,
         partial_failure: bool = False,

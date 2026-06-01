@@ -27,7 +27,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -60,7 +60,8 @@ class CampaignConversionGoalService:
     async def update_campaign_conversion_goal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         category: ConversionActionCategoryEnum.ConversionActionCategory,
         origin: ConversionOriginEnum.ConversionOrigin,
@@ -85,7 +86,7 @@ class CampaignConversionGoalService:
             Updated campaign conversion goal details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create resource name based on campaign, category, and origin
@@ -146,7 +147,8 @@ def create_campaign_conversion_goal_tools(
 
     async def update_campaign_conversion_goal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         category: str,
         origin: str,

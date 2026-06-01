@@ -23,7 +23,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -52,7 +52,8 @@ class RemarketingActionService:
     async def create_remarketing_action(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
     ) -> Dict[str, Any]:
         """Create a new remarketing action (tag).
@@ -66,7 +67,7 @@ class RemarketingActionService:
             Created remarketing action details with tag snippets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create remarketing action
             remarketing_action = RemarketingAction()
@@ -105,7 +106,8 @@ class RemarketingActionService:
     async def _get_remarketing_action(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         remarketing_action_id: str,
     ) -> Dict[str, Any]:
         """Get details of a remarketing action including tag snippets.
@@ -174,7 +176,8 @@ class RemarketingActionService:
     async def update_remarketing_action(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         remarketing_action_id: str,
         name: str,
     ) -> Dict[str, Any]:
@@ -190,7 +193,7 @@ class RemarketingActionService:
             Updated remarketing action details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/remarketingActions/{remarketing_action_id}"
             )
@@ -232,7 +235,8 @@ class RemarketingActionService:
     async def list_remarketing_actions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all remarketing actions in the account.
 
@@ -244,7 +248,7 @@ class RemarketingActionService:
             List of remarketing actions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -285,7 +289,8 @@ class RemarketingActionService:
     async def get_remarketing_action_tags(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         remarketing_action_id: str,
     ) -> Dict[str, Any]:
         """Get tag snippets for a remarketing action.
@@ -299,9 +304,11 @@ class RemarketingActionService:
             Tag snippets for the remarketing action
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             return await self._get_remarketing_action(
-                ctx, customer_id, remarketing_action_id
+                ctx,
+                customer_id=customer_id,
+                remarketing_action_id=remarketing_action_id,
             )
 
         except Exception as e:
@@ -322,7 +329,8 @@ def create_remarketing_action_tools(
 
     async def create_remarketing_action(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
     ) -> Dict[str, Any]:
         """Create a new remarketing action (tag) for tracking website visitors.
@@ -348,7 +356,8 @@ def create_remarketing_action_tools(
 
     async def update_remarketing_action(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         remarketing_action_id: str,
         name: str,
     ) -> Dict[str, Any]:
@@ -371,7 +380,8 @@ def create_remarketing_action_tools(
 
     async def list_remarketing_actions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all remarketing actions in the account.
 
@@ -388,7 +398,8 @@ def create_remarketing_action_tools(
 
     async def get_remarketing_action_tags(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         remarketing_action_id: str,
     ) -> Dict[str, Any]:
         """Get tag snippets for a remarketing action.

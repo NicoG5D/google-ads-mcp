@@ -23,7 +23,7 @@ from google.ads.googleads.v20.services.types.content_creator_insights_service im
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -55,7 +55,8 @@ class ContentCreatorInsightsService:
     async def generate_creator_insights_by_channels(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         customer_insights_group: str,
         country_geo_target_constants: Sequence[str],
         youtube_channel_ids: Sequence[str],
@@ -74,7 +75,7 @@ class ContentCreatorInsightsService:
             Creator insights for the specified YouTube channels
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             country_locations: List[LocationInfo] = []
             for geo_constant in country_geo_target_constants:
@@ -121,7 +122,8 @@ class ContentCreatorInsightsService:
     async def generate_trending_insights(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         customer_insights_group: str,
         country_geo_target_constant: str,
         topic_entity_ids: Optional[Sequence[str]] = None,
@@ -142,7 +144,7 @@ class ContentCreatorInsightsService:
             Trending content insights for the given country and criteria
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             country_location = LocationInfo()
             country_location.geo_target_constant = country_geo_target_constant
@@ -196,7 +198,8 @@ def create_content_creator_insights_tools(
 
     async def generate_creator_insights_by_channels(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         customer_insights_group: str,
         country_geo_target_constants: List[str],
         youtube_channel_ids: List[str],
@@ -236,7 +239,8 @@ def create_content_creator_insights_tools(
 
     async def generate_trending_insights(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         customer_insights_group: str,
         country_geo_target_constant: str,
         topic_entity_ids: Optional[List[str]] = None,

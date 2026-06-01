@@ -28,7 +28,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class CustomerUserAccessInvitationService:
     async def create_customer_user_access_invitation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         email_address: str,
         access_role: str,
     ) -> Dict[str, Any]:
@@ -73,7 +74,7 @@ class CustomerUserAccessInvitationService:
             Created customer user access invitation details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customer user access invitation
             invitation = CustomerUserAccessInvitation()
@@ -116,7 +117,8 @@ class CustomerUserAccessInvitationService:
     async def list_customer_user_access_invitations(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List customer user access invitations for a customer.
@@ -130,7 +132,7 @@ class CustomerUserAccessInvitationService:
             List of customer user access invitations
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -193,7 +195,8 @@ class CustomerUserAccessInvitationService:
     async def remove_customer_user_access_invitation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         invitation_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove (revoke) a customer user access invitation.
@@ -207,7 +210,7 @@ class CustomerUserAccessInvitationService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CustomerUserAccessInvitationOperation()
@@ -253,7 +256,8 @@ def create_customer_user_access_invitation_tools(
 
     async def create_customer_user_access_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         email_address: str,
         access_role: str,
     ) -> Dict[str, Any]:
@@ -276,7 +280,8 @@ def create_customer_user_access_invitation_tools(
 
     async def list_customer_user_access_invitations(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List customer user access invitations for a customer.
@@ -296,7 +301,8 @@ def create_customer_user_access_invitation_tools(
 
     async def remove_customer_user_access_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         invitation_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove (revoke) a customer user access invitation.

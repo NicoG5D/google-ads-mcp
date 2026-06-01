@@ -23,7 +23,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -54,7 +54,8 @@ class CustomerLifecycleGoalService:
     async def create_customer_lifecycle_goal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         value: Optional[float] = None,
         high_lifetime_value: Optional[float] = None,
         validate_only: bool = False,
@@ -75,7 +76,7 @@ class CustomerLifecycleGoalService:
             Configuration result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/customerLifecycleGoal"
 
             lifecycle_goal = CustomerLifecycleGoal()
@@ -120,7 +121,8 @@ class CustomerLifecycleGoalService:
     async def update_customer_lifecycle_goal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         value: Optional[float] = None,
         high_lifetime_value: Optional[float] = None,
         validate_only: bool = False,
@@ -138,7 +140,7 @@ class CustomerLifecycleGoalService:
             Configuration result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/customerLifecycleGoal"
 
             lifecycle_goal = CustomerLifecycleGoal()
@@ -149,9 +151,7 @@ class CustomerLifecycleGoalService:
 
             if value is not None:
                 value_settings.value = value
-                update_fields.append(
-                    "customer_acquisition_goal_value_settings.value"
-                )
+                update_fields.append("customer_acquisition_goal_value_settings.value")
             if high_lifetime_value is not None:
                 value_settings.high_lifetime_value = high_lifetime_value
                 update_fields.append(
@@ -199,7 +199,8 @@ def create_customer_lifecycle_goal_tools(
 
     async def create_customer_lifecycle_goal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         value: Optional[float] = None,
         high_lifetime_value: Optional[float] = None,
         validate_only: bool = False,
@@ -237,7 +238,8 @@ def create_customer_lifecycle_goal_tools(
 
     async def update_customer_lifecycle_goal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         value: Optional[float] = None,
         high_lifetime_value: Optional[float] = None,
         validate_only: bool = False,

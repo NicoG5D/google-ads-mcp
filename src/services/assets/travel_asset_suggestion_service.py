@@ -15,7 +15,7 @@ from google.ads.googleads.v20.services.types.travel_asset_suggestion_service imp
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -46,7 +46,8 @@ class TravelAssetSuggestionService:
     async def suggest_travel_assets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         language_option: str,
         place_ids: Sequence[str],
     ) -> Dict[str, Any]:
@@ -62,15 +63,15 @@ class TravelAssetSuggestionService:
             Suggested text and image assets for each hotel place ID
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             request = SuggestTravelAssetsRequest()
             request.customer_id = formatted_customer_id
             request.language_option = language_option
             request.place_ids = list(place_ids)
 
-            response: SuggestTravelAssetsResponse = (
-                self.client.suggest_travel_assets(request=request)
+            response: SuggestTravelAssetsResponse = self.client.suggest_travel_assets(
+                request=request
             )
 
             await ctx.log(
@@ -99,7 +100,8 @@ def create_travel_asset_suggestion_tools(
 
     async def suggest_travel_assets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         language_option: str,
         place_ids: List[str],
     ) -> Dict[str, Any]:

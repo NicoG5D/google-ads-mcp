@@ -32,7 +32,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -65,7 +65,8 @@ class ConversionValueRuleSetService:
     async def create_conversion_value_rule_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         dimensions: List[ValueRuleSetDimensionEnum.ValueRuleSetDimension],
         attachment_type: ValueRuleSetAttachmentTypeEnum.ValueRuleSetAttachmentType,
         conversion_action_categories: List[
@@ -96,7 +97,7 @@ class ConversionValueRuleSetService:
             Created conversion value rule set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             rule_set = ConversionValueRuleSet()
             rule_set.dimensions = dimensions
@@ -142,7 +143,8 @@ class ConversionValueRuleSetService:
     async def update_conversion_value_rule_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_value_rule_set_id: str,
         conversion_value_rules: Optional[List[str]] = None,
         dimensions: Optional[
@@ -168,7 +170,7 @@ class ConversionValueRuleSetService:
             Updated conversion value rule set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/conversionValueRuleSets/"
                 f"{conversion_value_rule_set_id}"
@@ -224,7 +226,8 @@ class ConversionValueRuleSetService:
     async def remove_conversion_value_rule_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_value_rule_set_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -242,7 +245,7 @@ class ConversionValueRuleSetService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/conversionValueRuleSets/"
                 f"{conversion_value_rule_set_id}"
@@ -287,7 +290,8 @@ def create_conversion_value_rule_set_tools(
 
     async def create_conversion_value_rule_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         dimensions: List[str],
         attachment_type: str,
         conversion_action_categories: List[str],
@@ -366,7 +370,8 @@ def create_conversion_value_rule_set_tools(
 
     async def update_conversion_value_rule_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_value_rule_set_id: str,
         conversion_value_rules: Optional[List[str]] = None,
         dimensions: Optional[List[str]] = None,
@@ -421,7 +426,8 @@ def create_conversion_value_rule_set_tools(
 
     async def remove_conversion_value_rule_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_value_rule_set_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,

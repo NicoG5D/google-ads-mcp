@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.ad_group_label_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -49,7 +49,8 @@ class AdGroupLabelService:
     async def apply_label_to_ad_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -65,7 +66,7 @@ class AdGroupLabelService:
             Created ad group label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
             label_resource = f"customers/{customer_id}/labels/{label_id}"
 
@@ -108,7 +109,8 @@ class AdGroupLabelService:
     async def apply_labels_to_ad_groups(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_label_pairs: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Apply labels to multiple ad groups.
@@ -122,7 +124,7 @@ class AdGroupLabelService:
             List of created ad group label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -183,7 +185,8 @@ class AdGroupLabelService:
     async def remove_label_from_ad_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -199,7 +202,7 @@ class AdGroupLabelService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_label_resource = (
                 f"customers/{customer_id}/adGroupLabels/{ad_group_id}~{label_id}"
             )
@@ -235,7 +238,8 @@ class AdGroupLabelService:
     async def list_ad_group_labels(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         label_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
@@ -253,7 +257,7 @@ class AdGroupLabelService:
             List of ad group labels
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -348,7 +352,8 @@ def create_ad_group_label_tools(
 
     async def apply_label_to_ad_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -371,7 +376,8 @@ def create_ad_group_label_tools(
 
     async def apply_labels_to_ad_groups(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_label_pairs: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Apply labels to multiple ad groups.
@@ -393,7 +399,8 @@ def create_ad_group_label_tools(
 
     async def remove_label_from_ad_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -416,7 +423,8 @@ def create_ad_group_label_tools(
 
     async def list_ad_group_labels(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         label_id: Optional[str] = None,
         campaign_id: Optional[str] = None,

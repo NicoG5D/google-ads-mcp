@@ -27,7 +27,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -60,7 +60,8 @@ class ConversionCustomVariableService:
     async def create_conversion_custom_variable(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         tag: str,
         status: ConversionCustomVariableStatusEnum.ConversionCustomVariableStatus = ConversionCustomVariableStatusEnum.ConversionCustomVariableStatus.ENABLED,
@@ -84,7 +85,7 @@ class ConversionCustomVariableService:
             Created custom variable details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create a new conversion custom variable
             custom_variable = ConversionCustomVariable()
@@ -128,7 +129,8 @@ class ConversionCustomVariableService:
     async def update_conversion_custom_variable(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_variable_id: int,
         name: Optional[str] = None,
         status: Optional[
@@ -156,7 +158,7 @@ class ConversionCustomVariableService:
             Updated custom variable details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/conversionCustomVariables/{custom_variable_id}"
 
             # Create custom variable with resource name
@@ -220,7 +222,8 @@ def create_conversion_custom_variable_tools(
 
     async def create_conversion_custom_variable(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         tag: str,
         status: str = "ENABLED",
@@ -270,7 +273,8 @@ def create_conversion_custom_variable_tools(
 
     async def update_conversion_custom_variable(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_variable_id: int,
         name: Optional[str] = None,
         status: Optional[str] = None,

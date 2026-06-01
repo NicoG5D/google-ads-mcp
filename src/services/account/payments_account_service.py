@@ -13,7 +13,7 @@ from google.ads.googleads.v20.services.types.payments_account_service import (
 from google.ads.googleads.errors import GoogleAdsException
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_ads_error, format_customer_id, get_logger
+from src.utils import format_ads_error, resolve_customer_id, get_logger
 
 logger = get_logger(__name__)
 
@@ -39,7 +39,8 @@ class PaymentsAccountService:
     async def list_payments_accounts(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all accessible payments accounts for a customer.
 
@@ -51,7 +52,7 @@ class PaymentsAccountService:
             List of payments accounts
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = ListPaymentsAccountsRequest()
@@ -115,7 +116,8 @@ def create_payments_account_tools(
 
     async def list_payments_accounts(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all accessible payments accounts for a customer.
 

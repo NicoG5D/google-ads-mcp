@@ -26,7 +26,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -55,7 +55,8 @@ class ExperimentService:
     async def create_experiment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -79,7 +80,7 @@ class ExperimentService:
             Created experiment details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create experiment
             experiment = Experiment()
@@ -133,7 +134,8 @@ class ExperimentService:
     async def schedule_experiment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -149,7 +151,7 @@ class ExperimentService:
             Operation status
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/experiments/{experiment_id}"
 
             # Create request
@@ -179,7 +181,8 @@ class ExperimentService:
     async def end_experiment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -195,7 +198,7 @@ class ExperimentService:
             Operation status
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/experiments/{experiment_id}"
 
             # Create request
@@ -226,7 +229,8 @@ class ExperimentService:
     async def promote_experiment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -242,7 +246,7 @@ class ExperimentService:
             Operation status
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/experiments/{experiment_id}"
 
             # Create request
@@ -273,7 +277,8 @@ class ExperimentService:
     async def list_experiments(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -289,7 +294,7 @@ class ExperimentService:
             List of experiments
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -359,7 +364,8 @@ def create_experiment_tools(
 
     async def create_experiment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -401,7 +407,8 @@ def create_experiment_tools(
 
     async def schedule_experiment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -424,7 +431,8 @@ def create_experiment_tools(
 
     async def end_experiment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -447,7 +455,8 @@ def create_experiment_tools(
 
     async def promote_experiment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment_id: str,
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -472,7 +481,8 @@ def create_experiment_tools(
 
     async def list_experiments(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:

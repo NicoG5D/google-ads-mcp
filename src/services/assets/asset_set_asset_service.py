@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.asset_set_asset_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -50,7 +50,8 @@ class AssetSetAssetService:
     async def create_asset_set_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set: str,
         asset: str,
         partial_failure: bool = False,
@@ -72,7 +73,7 @@ class AssetSetAssetService:
             Created asset set asset link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             asset_set_asset = AssetSetAsset()
             asset_set_asset.asset_set = asset_set
@@ -111,7 +112,8 @@ class AssetSetAssetService:
     async def remove_asset_set_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         asset_id: str,
         partial_failure: bool = False,
@@ -131,8 +133,10 @@ class AssetSetAssetService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/assetSetAssets/{asset_set_id}~{asset_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/assetSetAssets/{asset_set_id}~{asset_id}"
+            )
 
             operation = AssetSetAssetOperation()
             operation.remove = resource_name
@@ -172,7 +176,8 @@ def create_asset_set_asset_tools(
 
     async def create_asset_set_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set: str,
         asset: str,
         partial_failure: bool = False,
@@ -212,7 +217,8 @@ def create_asset_set_asset_tools(
 
     async def remove_asset_set_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         asset_id: str,
         partial_failure: bool = False,

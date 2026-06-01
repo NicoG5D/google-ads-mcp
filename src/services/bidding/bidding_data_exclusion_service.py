@@ -35,7 +35,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -64,7 +64,8 @@ class BiddingDataExclusionService:
     async def create_bidding_data_exclusion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         scope: str,
         start_date_time: str,
@@ -94,7 +95,7 @@ class BiddingDataExclusionService:
             Created bidding data exclusion details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding data exclusion
             exclusion = BiddingDataExclusion()
@@ -166,7 +167,8 @@ class BiddingDataExclusionService:
     async def update_bidding_data_exclusion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         exclusion_resource_name: str,
         name: Optional[str] = None,
         start_date_time: Optional[str] = None,
@@ -190,7 +192,7 @@ class BiddingDataExclusionService:
             Updated bidding data exclusion details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding data exclusion with resource name
             exclusion = BiddingDataExclusion()
@@ -256,7 +258,8 @@ class BiddingDataExclusionService:
     async def list_bidding_data_exclusions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         scope_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List bidding data exclusions for a customer.
@@ -270,7 +273,7 @@ class BiddingDataExclusionService:
             List of bidding data exclusions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -342,7 +345,8 @@ class BiddingDataExclusionService:
     async def remove_bidding_data_exclusion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         exclusion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a bidding data exclusion.
@@ -356,7 +360,7 @@ class BiddingDataExclusionService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = BiddingDataExclusionOperation()
@@ -400,7 +404,8 @@ def create_bidding_data_exclusion_tools(
 
     async def create_bidding_data_exclusion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         scope: str,
         start_date_time: str,
@@ -444,7 +449,8 @@ def create_bidding_data_exclusion_tools(
 
     async def update_bidding_data_exclusion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         exclusion_resource_name: str,
         name: Optional[str] = None,
         start_date_time: Optional[str] = None,
@@ -479,7 +485,8 @@ def create_bidding_data_exclusion_tools(
 
     async def list_bidding_data_exclusions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         scope_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List bidding data exclusions for a customer.
@@ -499,7 +506,8 @@ def create_bidding_data_exclusion_tools(
 
     async def remove_bidding_data_exclusion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         exclusion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a bidding data exclusion.

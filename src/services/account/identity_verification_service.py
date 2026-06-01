@@ -17,7 +17,7 @@ from google.ads.googleads.v20.enums.types.identity_verification_program import (
 from google.ads.googleads.errors import GoogleAdsException
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_ads_error, format_customer_id, get_logger
+from src.utils import format_ads_error, resolve_customer_id, get_logger
 
 logger = get_logger(__name__)
 
@@ -43,7 +43,8 @@ class IdentityVerificationService:
     async def start_identity_verification(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         verification_program: str,
     ) -> Dict[str, Any]:
         """Start identity verification for a customer.
@@ -57,7 +58,7 @@ class IdentityVerificationService:
             Identity verification start result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = StartIdentityVerificationRequest()
@@ -94,7 +95,8 @@ class IdentityVerificationService:
     async def get_identity_verification(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Get identity verification status for a customer.
 
@@ -106,7 +108,7 @@ class IdentityVerificationService:
             List of identity verification details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = GetIdentityVerificationRequest()
@@ -176,7 +178,8 @@ def create_identity_verification_tools(
 
     async def start_identity_verification(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         verification_program: str,
     ) -> Dict[str, Any]:
         """Start identity verification process for a customer account.
@@ -196,7 +199,8 @@ def create_identity_verification_tools(
 
     async def get_identity_verification(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Get identity verification status and requirements for a customer.
 

@@ -22,7 +22,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -51,7 +51,8 @@ class BudgetService:
     async def create_campaign_budget(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         amount_micros: int,
         delivery_method: str = "STANDARD",
@@ -71,7 +72,7 @@ class BudgetService:
             Created budget details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create a new campaign budget
             campaign_budget = CampaignBudget()
@@ -114,7 +115,8 @@ class BudgetService:
     async def update_campaign_budget(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         budget_id: str,
         name: Optional[str] = None,
         amount_micros: Optional[int] = None,
@@ -134,7 +136,7 @@ class BudgetService:
             Updated budget details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/campaignBudgets/{budget_id}"
 
             # Create budget with resource name
@@ -202,7 +204,8 @@ def create_budget_tools(service: BudgetService) -> List[Callable[..., Awaitable[
 
     async def create_campaign_budget(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         amount_micros: int,
         delivery_method: str = "STANDARD",
@@ -231,7 +234,8 @@ def create_budget_tools(service: BudgetService) -> List[Callable[..., Awaitable[
 
     async def update_campaign_budget(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         budget_id: str,
         name: Optional[str] = None,
         amount_micros: Optional[int] = None,

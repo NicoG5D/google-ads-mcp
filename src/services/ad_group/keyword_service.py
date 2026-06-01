@@ -27,7 +27,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -56,7 +56,8 @@ class KeywordService:
     async def add_keywords(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, str]],
         default_cpc_bid_micros: Optional[int] = None,
@@ -74,7 +75,7 @@ class KeywordService:
             Response with created keyword details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource_name = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             operations = []
@@ -139,7 +140,8 @@ class KeywordService:
     async def update_keyword_bid(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         criterion_id: str,
         cpc_bid_micros: int,
@@ -157,7 +159,7 @@ class KeywordService:
             Updated keyword details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/adGroupCriteria/{ad_group_id}~{criterion_id}"
             )
@@ -201,7 +203,8 @@ class KeywordService:
     async def remove_keyword(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         criterion_id: str,
     ) -> Dict[str, Any]:
@@ -217,7 +220,7 @@ class KeywordService:
             Removed keyword details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/adGroupCriteria/{ad_group_id}~{criterion_id}"
             )
@@ -263,7 +266,8 @@ def create_keyword_tools(
 
     async def add_keywords(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, str]],
         default_cpc_bid_micros: Optional[int] = None,
@@ -292,7 +296,8 @@ def create_keyword_tools(
 
     async def update_keyword_bid(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         criterion_id: str,
         cpc_bid_micros: int,
@@ -318,7 +323,8 @@ def create_keyword_tools(
 
     async def remove_keyword(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         criterion_id: str,
     ) -> Dict[str, Any]:

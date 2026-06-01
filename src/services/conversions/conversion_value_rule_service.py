@@ -35,7 +35,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -63,7 +63,8 @@ class ConversionValueRuleService:
     async def create_conversion_value_rule(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         action_operation: str,
         action_value: float,
         status: str = "ENABLED",
@@ -90,7 +91,7 @@ class ConversionValueRuleService:
             Created conversion value rule details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             rule = ConversionValueRule()
             rule.status = resolve_enum(
@@ -172,7 +173,8 @@ class ConversionValueRuleService:
     async def update_conversion_value_rule(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         rule_resource_name: str,
         status: Optional[str] = None,
         action_operation: Optional[str] = None,
@@ -192,7 +194,7 @@ class ConversionValueRuleService:
             Updated conversion value rule details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             rule = ConversionValueRule()
             rule.resource_name = rule_resource_name
@@ -249,7 +251,8 @@ class ConversionValueRuleService:
     async def remove_conversion_value_rule(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         rule_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a conversion value rule.
@@ -263,7 +266,7 @@ class ConversionValueRuleService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             operation = ConversionValueRuleOperation()
             operation.remove = rule_resource_name
@@ -292,7 +295,8 @@ class ConversionValueRuleService:
     async def list_conversion_value_rules(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List conversion value rules.
@@ -306,7 +310,7 @@ class ConversionValueRuleService:
             List of conversion value rules
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             sdk_client = get_sdk_client()
             google_ads_service: GoogleAdsServiceClient = sdk_client.client.get_service(
@@ -353,7 +357,8 @@ def create_conversion_value_rule_tools(
 
     async def create_conversion_value_rule(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         action_operation: str,
         action_value: float,
         status: str = "ENABLED",
@@ -400,7 +405,8 @@ def create_conversion_value_rule_tools(
 
     async def update_conversion_value_rule(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         rule_resource_name: str,
         status: Optional[str] = None,
         action_operation: Optional[str] = None,
@@ -429,7 +435,8 @@ def create_conversion_value_rule_tools(
 
     async def remove_conversion_value_rule(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         rule_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a conversion value rule.
@@ -449,7 +456,8 @@ def create_conversion_value_rule_tools(
 
     async def list_conversion_value_rules(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List conversion value rules.

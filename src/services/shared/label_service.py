@@ -30,7 +30,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class LabelService:
     async def create_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         background_color: Optional[str] = None,
@@ -77,7 +78,7 @@ class LabelService:
             Created label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create label
             label = Label()
@@ -124,7 +125,8 @@ class LabelService:
     async def update_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -146,7 +148,7 @@ class LabelService:
             Updated label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/labels/{label_id}"
 
             # Create label with resource name
@@ -209,7 +211,8 @@ class LabelService:
     async def list_labels(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all labels in the account.
@@ -223,7 +226,7 @@ class LabelService:
             List of labels
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -271,7 +274,8 @@ class LabelService:
     async def apply_label_to_campaigns(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         campaign_ids: List[str],
     ) -> Dict[str, Any]:
@@ -287,7 +291,7 @@ class LabelService:
             Application result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use CampaignLabelService
             sdk_client = get_sdk_client()
@@ -349,7 +353,8 @@ class LabelService:
     async def apply_label_to_ad_groups(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         ad_group_ids: List[str],
     ) -> Dict[str, Any]:
@@ -365,7 +370,7 @@ class LabelService:
             Application result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use AdGroupLabelService
             sdk_client = get_sdk_client()
@@ -435,7 +440,8 @@ def create_label_tools(service: LabelService) -> List[Callable[..., Awaitable[An
 
     async def create_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         background_color: Optional[str] = None,
@@ -467,7 +473,8 @@ def create_label_tools(service: LabelService) -> List[Callable[..., Awaitable[An
 
     async def update_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -506,7 +513,8 @@ def create_label_tools(service: LabelService) -> List[Callable[..., Awaitable[An
 
     async def list_labels(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all labels in the account.
@@ -526,7 +534,8 @@ def create_label_tools(service: LabelService) -> List[Callable[..., Awaitable[An
 
     async def apply_label_to_campaigns(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         campaign_ids: List[str],
     ) -> Dict[str, Any]:
@@ -549,7 +558,8 @@ def create_label_tools(service: LabelService) -> List[Callable[..., Awaitable[An
 
     async def apply_label_to_ad_groups(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         ad_group_ids: List[str],
     ) -> Dict[str, Any]:

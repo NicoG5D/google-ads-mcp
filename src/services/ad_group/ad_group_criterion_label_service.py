@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.ad_group_criterion_label_service im
 )
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_customer_id, serialize_proto_message
+from src.utils import resolve_customer_id, serialize_proto_message
 
 # Exception handling
 
@@ -49,7 +49,8 @@ class AdGroupCriterionLabelService:
 
     def mutate_ad_group_criterion_labels(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[AdGroupCriterionLabelOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -70,7 +71,7 @@ class AdGroupCriterionLabelService:
             GoogleAdsException: If the request fails.
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             request = MutateAdGroupCriterionLabelsRequest(
                 customer_id=customer_id,
                 operations=operations,
@@ -118,7 +119,8 @@ class AdGroupCriterionLabelService:
 
     def assign_label_to_criterion(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criterion: str,
         label: str,
         validate_only: bool = False,
@@ -134,7 +136,7 @@ class AdGroupCriterionLabelService:
         Returns:
             MutateAdGroupCriterionLabelsResponse: The response containing the result.
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         operation = self.create_ad_group_criterion_label_operation(
             ad_group_criterion=ad_group_criterion,
             label=label,
@@ -148,7 +150,8 @@ class AdGroupCriterionLabelService:
 
     def remove_label_from_criterion(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> MutateAdGroupCriterionLabelsResponse:
@@ -162,7 +165,7 @@ class AdGroupCriterionLabelService:
         Returns:
             MutateAdGroupCriterionLabelsResponse: The response containing the result.
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         operation = self.create_remove_operation(resource_name=resource_name)
 
         return self.mutate_ad_group_criterion_labels(
@@ -173,7 +176,8 @@ class AdGroupCriterionLabelService:
 
     def assign_multiple_labels_to_criterion(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criterion: str,
         labels: List[str],
         validate_only: bool = False,
@@ -189,7 +193,7 @@ class AdGroupCriterionLabelService:
         Returns:
             MutateAdGroupCriterionLabelsResponse: The response containing the results.
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         operations = []
         for label in labels:
             operation = self.create_ad_group_criterion_label_operation(
@@ -206,7 +210,8 @@ class AdGroupCriterionLabelService:
 
     def assign_label_to_multiple_criteria(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criteria: List[str],
         label: str,
         validate_only: bool = False,
@@ -222,7 +227,7 @@ class AdGroupCriterionLabelService:
         Returns:
             MutateAdGroupCriterionLabelsResponse: The response containing the results.
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         operations = []
         for ad_group_criterion in ad_group_criteria:
             operation = self.create_ad_group_criterion_label_operation(
@@ -243,7 +248,8 @@ def register_ad_group_criterion_label_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_ad_group_criterion_labels(  # type: ignore
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -290,7 +296,8 @@ def register_ad_group_criterion_label_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def assign_label_to_criterion(  # type: ignore
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criterion: str,
         label: str,
         validate_only: bool = False,
@@ -320,7 +327,8 @@ def register_ad_group_criterion_label_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_label_from_criterion(  # type: ignore
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> str:
@@ -346,7 +354,8 @@ def register_ad_group_criterion_label_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def assign_multiple_labels_to_criterion(  # type: ignore
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criterion: str,
         labels: list[str],
         validate_only: bool = False,
@@ -375,7 +384,8 @@ def register_ad_group_criterion_label_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def assign_label_to_multiple_criteria(  # type: ignore
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_criteria: list[str],
         label: str,
         validate_only: bool = False,

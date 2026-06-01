@@ -31,7 +31,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -64,7 +64,8 @@ class CampaignBidModifierService:
     async def create_interaction_type_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         interaction_type: InteractionTypeEnum.InteractionType,
         bid_modifier: float,
@@ -82,7 +83,7 @@ class CampaignBidModifierService:
             Created bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create interaction type bid modifier
@@ -128,7 +129,8 @@ class CampaignBidModifierService:
     async def update_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
         new_bid_modifier: float,
     ) -> Dict[str, Any]:
@@ -144,7 +146,7 @@ class CampaignBidModifierService:
             Updated bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bid modifier with updated value
             bid_modifier_obj = CampaignBidModifier()
@@ -186,7 +188,8 @@ class CampaignBidModifierService:
     async def list_campaign_bid_modifiers(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List campaign bid modifiers (interaction type only).
@@ -200,7 +203,7 @@ class CampaignBidModifierService:
             List of campaign bid modifiers
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -272,7 +275,8 @@ class CampaignBidModifierService:
     async def remove_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign bid modifier.
@@ -286,7 +290,7 @@ class CampaignBidModifierService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CampaignBidModifierOperation()
@@ -329,7 +333,8 @@ def create_campaign_bid_modifier_tools(
 
     async def create_interaction_type_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         interaction_type: str,
         bid_modifier: float,
@@ -363,7 +368,8 @@ def create_campaign_bid_modifier_tools(
 
     async def update_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
         new_bid_modifier: float,
     ) -> Dict[str, Any]:
@@ -386,7 +392,8 @@ def create_campaign_bid_modifier_tools(
 
     async def list_campaign_bid_modifiers(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List campaign bid modifiers (interaction type only).
@@ -409,7 +416,8 @@ def create_campaign_bid_modifier_tools(
 
     async def remove_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign bid modifier.

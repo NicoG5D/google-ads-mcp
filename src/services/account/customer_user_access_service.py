@@ -24,7 +24,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class CustomerUserAccessService:
     async def update_user_access(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_access_resource_name: str,
         access_role: Optional[AccessRoleEnum.AccessRole] = None,
     ) -> Dict[str, Any]:
@@ -73,7 +74,7 @@ class CustomerUserAccessService:
             Updated user access details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customer user access with resource name
             user_access = CustomerUserAccess()
@@ -120,7 +121,8 @@ class CustomerUserAccessService:
     async def list_user_access(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List user access for a customer account.
 
@@ -132,7 +134,7 @@ class CustomerUserAccessService:
             List of user access permissions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -177,7 +179,8 @@ class CustomerUserAccessService:
     async def revoke_user_access(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_access_resource_name: str,
     ) -> Dict[str, Any]:
         """Revoke user access to a customer account.
@@ -191,7 +194,7 @@ class CustomerUserAccessService:
             Revocation result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CustomerUserAccessOperation()
@@ -238,7 +241,8 @@ def create_customer_user_access_tools(
 
     async def update_user_access(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_access_resource_name: str,
         access_role: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -268,7 +272,8 @@ def create_customer_user_access_tools(
 
     async def list_user_access(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List user access for a customer account.
 
@@ -285,7 +290,8 @@ def create_customer_user_access_tools(
 
     async def revoke_user_access(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_access_resource_name: str,
     ) -> Dict[str, Any]:
         """Revoke user access to a customer account.

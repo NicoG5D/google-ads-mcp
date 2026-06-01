@@ -30,7 +30,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -59,7 +59,8 @@ class AccountBudgetProposalService:
     async def create_account_budget_proposal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         proposal_type: AccountBudgetProposalTypeEnum.AccountBudgetProposalType,
         billing_setup: str,
         proposed_name: str,
@@ -89,7 +90,7 @@ class AccountBudgetProposalService:
             Mutation result dictionary
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create account budget proposal
             proposal = AccountBudgetProposal()
@@ -148,7 +149,8 @@ class AccountBudgetProposalService:
     async def update_account_budget_proposal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_budget: str,
         billing_setup: str,
         proposed_name: Optional[str] = None,
@@ -175,7 +177,7 @@ class AccountBudgetProposalService:
             Mutation result dictionary
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create account budget proposal for UPDATE
             proposal = AccountBudgetProposal()
@@ -228,7 +230,8 @@ class AccountBudgetProposalService:
     async def list_account_budget_proposals(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List account budget proposals for a customer.
 
@@ -240,7 +243,7 @@ class AccountBudgetProposalService:
             List of account budget proposal dictionaries
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -292,7 +295,8 @@ class AccountBudgetProposalService:
     async def remove_account_budget_proposal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         proposal_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an account budget proposal.
@@ -306,7 +310,7 @@ class AccountBudgetProposalService:
             Mutation result dictionary
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AccountBudgetProposalOperation()
@@ -349,7 +353,8 @@ def create_account_budget_proposal_tools(
 
     async def create_account_budget_proposal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         proposal_type: str,
         billing_setup: str,
         proposed_name: str,
@@ -415,7 +420,8 @@ def create_account_budget_proposal_tools(
 
     async def update_account_budget_proposal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_budget: str,
         billing_setup: str,
         proposed_name: Optional[str] = None,
@@ -450,7 +456,8 @@ def create_account_budget_proposal_tools(
 
     async def list_account_budget_proposals(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List account budget proposals for a customer.
 
@@ -467,7 +474,8 @@ def create_account_budget_proposal_tools(
 
     async def remove_account_budget_proposal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         proposal_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an account budget proposal.

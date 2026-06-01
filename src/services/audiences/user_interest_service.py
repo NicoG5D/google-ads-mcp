@@ -12,7 +12,7 @@ from google.ads.googleads.v20.services.services.google_ads_service import (
 
 from src.sdk_client import get_sdk_client
 from src.utils import (
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
 )
 
@@ -59,7 +59,8 @@ class UserInterestService:
     async def list_user_interests(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         taxonomy_type: str = "AFFINITY",
         launched_to_all_only: bool = True,
         limit: int = 500,
@@ -79,7 +80,7 @@ class UserInterestService:
             List of user interest categories
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             gaql = get_sdk_client().client.get_service("GoogleAdsService")
 
             conditions = [f"user_interest.taxonomy_type = '{taxonomy_type}'"]
@@ -111,7 +112,8 @@ class UserInterestService:
     async def search_user_interests(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword: str,
         taxonomy_type: Optional[str] = None,
         launched_to_all_only: bool = True,
@@ -133,7 +135,7 @@ class UserInterestService:
             List of matching user interest categories
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             gaql = get_sdk_client().client.get_service("GoogleAdsService")
 
             conditions = [f"user_interest.name LIKE '%{keyword}%'"]
@@ -167,7 +169,8 @@ class UserInterestService:
     async def get_user_interest(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_interest_id: str,
     ) -> Dict[str, Any]:
         """Get a specific predefined audience by its ID.
@@ -181,7 +184,7 @@ class UserInterestService:
             User interest details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             gaql = get_sdk_client().client.get_service("GoogleAdsService")
 
             query = (
@@ -214,7 +217,8 @@ def create_user_interest_tools(
 
     async def list_user_interests(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         taxonomy_type: str = "AFFINITY",
         launched_to_all_only: bool = True,
         limit: int = 500,
@@ -257,7 +261,8 @@ def create_user_interest_tools(
 
     async def search_user_interests(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword: str,
         taxonomy_type: Optional[str] = None,
         launched_to_all_only: bool = True,
@@ -302,7 +307,8 @@ def create_user_interest_tools(
 
     async def get_user_interest(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_interest_id: str,
     ) -> Dict[str, Any]:
         """Get a specific predefined Google audience by its ID.

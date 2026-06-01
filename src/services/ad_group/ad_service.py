@@ -28,7 +28,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class AdService:
     async def create_responsive_search_ad(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         headlines: List[str],
         descriptions: List[str],
@@ -83,7 +84,7 @@ class AdService:
             Created ad details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource_name = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create ad
@@ -152,7 +153,8 @@ class AdService:
     async def create_expanded_text_ad(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         headline1: str,
         headline2: str,
@@ -184,7 +186,7 @@ class AdService:
             Created ad details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource_name = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create ad
@@ -249,7 +251,8 @@ class AdService:
     async def update_ad_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         ad_id: str,
         status: AdGroupAdStatusEnum.AdGroupAdStatus,
@@ -267,7 +270,7 @@ class AdService:
             Updated ad details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/adGroupAds/{ad_group_id}~{ad_id}"
 
             # Create ad group ad with resource name
@@ -315,7 +318,8 @@ def create_ad_tools(service: AdService) -> List[Callable[..., Awaitable[Any]]]:
 
     async def create_responsive_search_ad(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         headlines: List[str],
         descriptions: List[str],
@@ -358,7 +362,8 @@ def create_ad_tools(service: AdService) -> List[Callable[..., Awaitable[Any]]]:
 
     async def create_expanded_text_ad(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         headline1: str,
         headline2: str,
@@ -410,7 +415,8 @@ def create_ad_tools(service: AdService) -> List[Callable[..., Awaitable[Any]]]:
 
     async def update_ad_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         ad_id: str,
         status: str,

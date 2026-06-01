@@ -25,7 +25,7 @@ from google.ads.googleads.v20.services.types.google_ads_service import MutateOpe
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -54,7 +54,8 @@ class BatchJobService:
     async def create_batch_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a new batch job.
 
@@ -66,7 +67,7 @@ class BatchJobService:
             Created batch job details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create batch job
             batch_job = BatchJob()
@@ -104,7 +105,8 @@ class BatchJobService:
     async def get_batch_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
     ) -> Dict[str, Any]:
         """Get batch job details.
@@ -118,7 +120,7 @@ class BatchJobService:
             Batch job details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search instead of get_batch_job
             sdk_client = get_sdk_client()
@@ -313,7 +315,8 @@ class BatchJobService:
     async def add_operations_to_batch_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
         operations_data: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -329,7 +332,7 @@ class BatchJobService:
             Result of adding operations
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             operations = [
                 self._build_mutate_operation(op, customer_id) for op in operations_data
@@ -363,7 +366,8 @@ class BatchJobService:
     async def run_batch_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
     ) -> Dict[str, Any]:
         """Run a batch job.
@@ -377,7 +381,7 @@ class BatchJobService:
             Batch job execution details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = RunBatchJobRequest()
@@ -409,7 +413,8 @@ class BatchJobService:
     async def list_batch_job_results(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
         page_size: int = 1000,
         page_token: Optional[str] = None,
@@ -427,7 +432,7 @@ class BatchJobService:
             Batch job results
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = ListBatchJobResultsRequest()
@@ -458,7 +463,8 @@ class BatchJobService:
     async def list_batch_jobs(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List batch jobs for a customer.
@@ -472,7 +478,7 @@ class BatchJobService:
             List of batch jobs
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -534,7 +540,8 @@ def create_batch_job_tools(
 
     async def create_batch_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a new batch job for bulk operations.
 
@@ -551,7 +558,8 @@ def create_batch_job_tools(
 
     async def get_batch_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
     ) -> Dict[str, Any]:
         """Get batch job details and status.
@@ -571,7 +579,8 @@ def create_batch_job_tools(
 
     async def add_operations_to_batch_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
         operations_data: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -615,7 +624,8 @@ def create_batch_job_tools(
 
     async def run_batch_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
     ) -> Dict[str, Any]:
         """Run a batch job to execute all added operations.
@@ -635,7 +645,8 @@ def create_batch_job_tools(
 
     async def list_batch_job_results(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         batch_job_resource_name: str,
         page_size: int = 1000,
         page_token: Optional[str] = None,
@@ -661,7 +672,8 @@ def create_batch_job_tools(
 
     async def list_batch_jobs(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List batch jobs for a customer.

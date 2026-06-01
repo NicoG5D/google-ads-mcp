@@ -24,7 +24,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class AdGroupAssetService:
     async def link_asset_to_ad_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,
@@ -73,7 +74,7 @@ class AdGroupAssetService:
             Created ad group asset link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
             asset_resource = f"customers/{customer_id}/assets/{asset_id}"
 
@@ -121,7 +122,8 @@ class AdGroupAssetService:
     async def link_multiple_assets_to_ad_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_links: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -137,7 +139,7 @@ class AdGroupAssetService:
             List of created ad group asset links
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create operations
@@ -207,7 +209,8 @@ class AdGroupAssetService:
     async def update_ad_group_asset_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,
@@ -227,7 +230,7 @@ class AdGroupAssetService:
             Updated ad group asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Ad group asset resource names use ~ as separator
             resource_name = f"customers/{customer_id}/adGroupAssets/{ad_group_id}~{asset_id}~{field_type}"
 
@@ -270,7 +273,8 @@ class AdGroupAssetService:
     async def list_ad_group_assets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         field_type: Optional[str] = None,
         campaign_id: Optional[str] = None,
@@ -290,7 +294,7 @@ class AdGroupAssetService:
             List of ad group assets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -379,7 +383,8 @@ class AdGroupAssetService:
     async def remove_asset_from_ad_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,
@@ -397,7 +402,7 @@ class AdGroupAssetService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Ad group asset resource names use ~ as separator
             ad_group_asset_resource = f"customers/{customer_id}/adGroupAssets/{ad_group_id}~{asset_id}~{field_type}"
 
@@ -442,7 +447,8 @@ def create_ad_group_asset_tools(
 
     async def link_asset_to_ad_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,
@@ -482,7 +488,8 @@ def create_ad_group_asset_tools(
 
     async def link_multiple_assets_to_ad_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_links: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -508,7 +515,8 @@ def create_ad_group_asset_tools(
 
     async def update_ad_group_asset_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,
@@ -537,7 +545,8 @@ def create_ad_group_asset_tools(
 
     async def list_ad_group_assets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         field_type: Optional[str] = None,
         campaign_id: Optional[str] = None,
@@ -566,7 +575,8 @@ def create_ad_group_asset_tools(
 
     async def remove_asset_from_ad_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         asset_id: str,
         field_type: str,

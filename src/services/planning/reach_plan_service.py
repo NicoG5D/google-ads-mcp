@@ -27,7 +27,7 @@ from google.ads.googleads.v20.services.types.reach_plan_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -167,7 +167,8 @@ class ReachPlanService:
     async def generate_reach_forecast(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         plannable_location_id: str,
         planned_products: List[Dict[str, Any]],
         duration_days: int = 30,
@@ -196,7 +197,7 @@ class ReachPlanService:
             total_impressions, and viewable_impressions per planned product.
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Build campaign duration
             campaign_duration = CampaignDuration()
@@ -294,7 +295,8 @@ def create_reach_plan_tools(
 
     async def generate_reach_forecast(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         plannable_location_id: str,
         planned_products: List[Dict[str, Any]],
         duration_days: int = 30,

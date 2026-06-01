@@ -34,7 +34,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -63,7 +63,8 @@ class AdGroupBidModifierService:
     async def create_device_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         device_type: str,
         bid_modifier: float,
@@ -81,7 +82,7 @@ class AdGroupBidModifierService:
             Created bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create device bid modifier
@@ -129,7 +130,8 @@ class AdGroupBidModifierService:
     async def create_hotel_check_in_day_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         day_of_week: str,
         bid_modifier: float,
@@ -147,7 +149,7 @@ class AdGroupBidModifierService:
             Created bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create bid modifier
@@ -195,7 +197,8 @@ class AdGroupBidModifierService:
     async def create_hotel_date_selection_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         date_selection_type: str,
         bid_modifier: float,
@@ -213,7 +216,7 @@ class AdGroupBidModifierService:
             Created bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create bid modifier
@@ -263,7 +266,8 @@ class AdGroupBidModifierService:
     async def update_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
         new_bid_modifier: float,
     ) -> Dict[str, Any]:
@@ -279,7 +283,7 @@ class AdGroupBidModifierService:
             Updated bid modifier details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bid modifier with updated value
             bid_modifier_obj = AdGroupBidModifier()
@@ -320,7 +324,8 @@ class AdGroupBidModifierService:
     async def list_ad_group_bid_modifiers(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -336,7 +341,7 @@ class AdGroupBidModifierService:
             List of ad group bid modifiers
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -450,7 +455,8 @@ class AdGroupBidModifierService:
     async def remove_bid_modifier(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group bid modifier.
@@ -464,7 +470,7 @@ class AdGroupBidModifierService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AdGroupBidModifierOperation()
@@ -507,7 +513,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def create_ad_group_device_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         device_type: str,
         bid_modifier: float,
@@ -533,7 +540,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def create_ad_group_hotel_check_in_day_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         day_of_week: str,
         bid_modifier: float,
@@ -559,7 +567,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def create_ad_group_hotel_date_selection_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         date_selection_type: str,
         bid_modifier: float,
@@ -585,7 +594,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def update_ad_group_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
         new_bid_modifier: float,
     ) -> Dict[str, Any]:
@@ -608,7 +618,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def list_ad_group_bid_modifiers(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -631,7 +642,8 @@ def create_ad_group_bid_modifier_tools(
 
     async def remove_ad_group_bid_modifier(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         bid_modifier_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group bid modifier.

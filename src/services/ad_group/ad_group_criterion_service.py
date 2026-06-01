@@ -36,7 +36,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -65,7 +65,8 @@ class AdGroupCriterionService:
     async def add_keywords(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, Any]],
         negative: bool = False,
@@ -83,7 +84,7 @@ class AdGroupCriterionService:
             List of created ad group criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create operations
@@ -143,7 +144,8 @@ class AdGroupCriterionService:
     async def add_audience_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         user_list_ids: List[str],
         bid_modifier: Optional[float] = None,
@@ -161,7 +163,7 @@ class AdGroupCriterionService:
             List of created ad group criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create operations
@@ -235,7 +237,8 @@ class AdGroupCriterionService:
     async def add_demographic_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         demographics: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -251,7 +254,7 @@ class AdGroupCriterionService:
             List of created ad group criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create operations
@@ -333,7 +336,8 @@ class AdGroupCriterionService:
     async def update_criterion_bid(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
         cpc_bid_micros: Optional[int] = None,
         bid_modifier: Optional[float] = None,
@@ -351,7 +355,7 @@ class AdGroupCriterionService:
             Updated criterion details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create ad group criterion
             ad_group_criterion = AdGroupCriterion()
@@ -402,7 +406,8 @@ class AdGroupCriterionService:
     async def remove_ad_group_criterion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group criterion.
@@ -416,7 +421,7 @@ class AdGroupCriterionService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AdGroupCriterionOperation()
@@ -459,7 +464,8 @@ def create_ad_group_criterion_tools(
 
     async def add_keywords(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, Any]],
         negative: bool = False,
@@ -488,7 +494,8 @@ def create_ad_group_criterion_tools(
 
     async def add_audience_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         user_list_ids: List[str],
         bid_modifier: Optional[float] = None,
@@ -514,7 +521,8 @@ def create_ad_group_criterion_tools(
 
     async def add_demographic_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         demographics: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -540,7 +548,8 @@ def create_ad_group_criterion_tools(
 
     async def update_criterion_bid(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
         cpc_bid_micros: Optional[int] = None,
         bid_modifier: Optional[float] = None,
@@ -566,7 +575,8 @@ def create_ad_group_criterion_tools(
 
     async def remove_ad_group_criterion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group criterion.

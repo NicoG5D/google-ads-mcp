@@ -22,7 +22,7 @@ from google.ads.googleads.v20.services.types.user_list_customer_type_service imp
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -54,7 +54,8 @@ class UserListCustomerTypeService:
     async def attach_user_list_customer_type(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list: str,
         customer_type_category: UserListCustomerTypeCategoryEnum.UserListCustomerTypeCategory,
         partial_failure: bool = False,
@@ -74,7 +75,7 @@ class UserListCustomerTypeService:
             Created user list customer type details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             user_list_customer_type = UserListCustomerType()
             user_list_customer_type.user_list = user_list
@@ -112,7 +113,8 @@ class UserListCustomerTypeService:
     async def detach_user_list_customer_type(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         customer_type_category: str,
         partial_failure: bool = False,
@@ -132,7 +134,7 @@ class UserListCustomerTypeService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/userListCustomerTypes/{user_list_id}~{customer_type_category}"
 
             operation = UserListCustomerTypeOperation()
@@ -173,7 +175,8 @@ def create_user_list_customer_type_tools(
 
     async def attach_user_list_customer_type(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list: str,
         customer_type_category: str,
         partial_failure: bool = False,
@@ -220,7 +223,8 @@ def create_user_list_customer_type_tools(
 
     async def detach_user_list_customer_type(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         customer_type_category: str,
         partial_failure: bool = False,

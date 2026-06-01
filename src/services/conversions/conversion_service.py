@@ -39,7 +39,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -68,7 +68,8 @@ class ConversionService:
     async def create_conversion_action(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         category: str = "PURCHASE",
         type: str = "WEBPAGE",
@@ -98,7 +99,7 @@ class ConversionService:
             Created conversion action details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create conversion action
             conversion_action = ConversionAction()
@@ -188,7 +189,8 @@ class ConversionService:
     async def update_conversion_action(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,
@@ -212,7 +214,7 @@ class ConversionService:
             Updated conversion action details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/conversionActions/{conversion_action_id}"
             )
@@ -296,7 +298,8 @@ def create_conversion_tools(
 
     async def create_conversion_action(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         category: str = "PURCHASE",
         type: str = "WEBPAGE",
@@ -342,7 +345,8 @@ def create_conversion_tools(
 
     async def update_conversion_action(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,

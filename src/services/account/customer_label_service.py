@@ -17,7 +17,7 @@ from google.ads.googleads.v20.services.types.customer_label_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -51,7 +51,8 @@ class CustomerLabelService:
     async def create_customer_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -71,7 +72,7 @@ class CustomerLabelService:
             Created customer label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             label_resource = f"customers/{customer_id}/labels/{label_id}"
 
             # Create a new customer label
@@ -115,7 +116,8 @@ class CustomerLabelService:
     async def remove_customer_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -133,7 +135,7 @@ class CustomerLabelService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Construct resource name
             resource_name = f"customers/{customer_id}/customerLabels/{label_id}"
@@ -177,7 +179,8 @@ def create_customer_label_tools(
 
     async def create_customer_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -221,7 +224,8 @@ def create_customer_label_tools(
 
     async def remove_customer_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         label_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,

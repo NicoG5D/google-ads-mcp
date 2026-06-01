@@ -26,7 +26,7 @@ from google.ads.googleads.v20.enums.types.customizer_attribute_type import (
 )
 from google.ads.googleads.v20.common.types.customizer_value import CustomizerValue
 
-from src.utils import resolve_enum
+from src.utils import resolve_enum, resolve_customer_id
 from src.sdk_client import get_sdk_client
 
 
@@ -54,7 +54,8 @@ class AdGroupCustomizerService:
 
     def mutate_ad_group_customizers(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[AdGroupCustomizerOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -77,6 +78,7 @@ class AdGroupCustomizerService:
             Exception: If the request fails.
         """
         try:
+            customer_id = resolve_customer_id(customer_id)
             request = MutateAdGroupCustomizersRequest(
                 customer_id=customer_id,
                 operations=operations,
@@ -133,7 +135,8 @@ class AdGroupCustomizerService:
 
     def create_ad_group_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         value_type: CustomizerAttributeTypeEnum.CustomizerAttributeType,
@@ -168,7 +171,8 @@ class AdGroupCustomizerService:
 
     def remove_ad_group_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> MutateAdGroupCustomizersResponse:
@@ -192,7 +196,8 @@ class AdGroupCustomizerService:
 
     def create_text_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         text_value: str,
@@ -221,7 +226,8 @@ class AdGroupCustomizerService:
 
     def create_number_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         number_value: str,
@@ -250,7 +256,8 @@ class AdGroupCustomizerService:
 
     def create_price_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         price_value: str,
@@ -279,7 +286,8 @@ class AdGroupCustomizerService:
 
     def create_percent_customizer(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         percent_value: str,
@@ -312,7 +320,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_ad_group_customizers(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -407,7 +416,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_ad_group_customizer(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         value_type: str,
@@ -457,7 +467,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_text_customizer(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         text_value: str,
@@ -496,7 +507,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_number_customizer(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         number_value: str,
@@ -535,7 +547,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_price_customizer(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group: str,
         customizer_attribute: str,
         price_value: str,
@@ -574,7 +587,8 @@ def register_ad_group_customizer_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_ad_group_customizer(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> dict[str, Any]:

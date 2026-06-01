@@ -16,7 +16,7 @@ from google.ads.googleads.v20.services.types.invoice_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -45,7 +45,8 @@ class InvoiceService:
     async def list_invoices(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         billing_setup: str,
         issue_year: str,
         issue_month: MonthOfYearEnum.MonthOfYear,
@@ -63,7 +64,7 @@ class InvoiceService:
             List of invoices with details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = ListInvoicesRequest()
@@ -104,7 +105,8 @@ def create_invoice_tools(
 
     async def list_invoices(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         billing_setup: str,
         issue_year: str,
         issue_month: str,

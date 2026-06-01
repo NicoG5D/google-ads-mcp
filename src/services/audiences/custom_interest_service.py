@@ -34,7 +34,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -63,7 +63,8 @@ class CustomInterestService:
     async def create_custom_interest(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         members: List[Dict[str, str]],
@@ -89,7 +90,7 @@ class CustomInterestService:
             Created custom interest details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create custom interest
             custom_interest = CustomInterest()
@@ -150,7 +151,8 @@ class CustomInterestService:
     async def update_custom_interest(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_interest_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -172,7 +174,7 @@ class CustomInterestService:
             Updated custom interest details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/customInterests/{custom_interest_id}"
             )
@@ -250,7 +252,8 @@ class CustomInterestService:
     async def list_custom_interests(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -266,7 +269,7 @@ class CustomInterestService:
             List of custom interests
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -320,7 +323,8 @@ class CustomInterestService:
     async def get_custom_interest_details(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_interest_id: str,
     ) -> Dict[str, Any]:
         """Get detailed information about a custom interest including members.
@@ -334,7 +338,7 @@ class CustomInterestService:
             Custom interest details with members
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -400,7 +404,8 @@ def create_custom_interest_tools(
 
     async def create_custom_interest(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         members: List[Dict[str, str]],
@@ -438,7 +443,8 @@ def create_custom_interest_tools(
 
     async def update_custom_interest(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_interest_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -470,7 +476,8 @@ def create_custom_interest_tools(
 
     async def list_custom_interests(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -493,7 +500,8 @@ def create_custom_interest_tools(
 
     async def get_custom_interest_details(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_interest_id: str,
     ) -> Dict[str, Any]:
         """Get detailed information about a custom interest including all members.

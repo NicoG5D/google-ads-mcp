@@ -30,7 +30,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     RATE_LIMIT_MSG,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     is_resource_exhausted,
     serialize_proto_message,
@@ -60,7 +60,8 @@ class KeywordPlanService:
     async def create_keyword_plan(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         forecast_period_days: int = 30,
     ) -> Dict[str, Any]:
@@ -76,7 +77,7 @@ class KeywordPlanService:
             Created keyword plan details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create keyword plan
             keyword_plan = KeywordPlan()
@@ -127,7 +128,8 @@ class KeywordPlanService:
     async def get_keyword_ideas(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: Optional[List[str]] = None,
         url: Optional[str] = None,
         location_ids: Optional[List[str]] = None,
@@ -151,7 +153,7 @@ class KeywordPlanService:
             List of keyword ideas with metrics
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use KeywordPlanIdeaService
             sdk_client = get_sdk_client()
@@ -213,7 +215,8 @@ class KeywordPlanService:
     async def create_keyword_plan_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword_plan_id: str,
         name: str,
         cpc_bid_micros: int,
@@ -235,7 +238,7 @@ class KeywordPlanService:
             Created campaign details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use KeywordPlanCampaignService
             sdk_client = get_sdk_client()
@@ -309,7 +312,8 @@ class KeywordPlanService:
     async def add_keywords_to_plan(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, Any]],
     ) -> List[Dict[str, Any]]:
@@ -325,7 +329,7 @@ class KeywordPlanService:
             List of created keyword details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use KeywordPlanAdGroupKeywordService
             sdk_client = get_sdk_client()
@@ -414,7 +418,8 @@ def create_keyword_plan_tools(
 
     async def create_keyword_plan(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         forecast_period_days: int = 30,
     ) -> Dict[str, Any]:
@@ -437,7 +442,8 @@ def create_keyword_plan_tools(
 
     async def get_keyword_ideas(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: Optional[List[str]] = None,
         url: Optional[str] = None,
         location_ids: Optional[List[str]] = None,
@@ -478,7 +484,8 @@ def create_keyword_plan_tools(
 
     async def create_keyword_plan_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword_plan_id: str,
         name: str,
         cpc_bid_micros: int,
@@ -510,7 +517,8 @@ def create_keyword_plan_tools(
 
     async def add_keywords_to_plan(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         keywords: List[Dict[str, Any]],
     ) -> List[Dict[str, Any]]:

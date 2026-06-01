@@ -22,7 +22,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -51,7 +51,8 @@ class BillingSetupService:
     async def create_billing_setup(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         payments_account_id: str,
         start_date: str,
         end_date: Optional[str] = None,
@@ -73,7 +74,7 @@ class BillingSetupService:
             Created billing setup details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create billing setup
             billing_setup = BillingSetup()
@@ -128,7 +129,8 @@ class BillingSetupService:
     async def list_billing_setups(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List billing setups for a customer.
@@ -142,7 +144,7 @@ class BillingSetupService:
             List of billing setups
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -193,7 +195,8 @@ class BillingSetupService:
     async def get_billing_setup(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         billing_setup_id: str,
     ) -> Dict[str, Any]:
         """Get details of a specific billing setup.
@@ -207,7 +210,7 @@ class BillingSetupService:
             Billing setup details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -255,7 +258,8 @@ class BillingSetupService:
     async def list_payments_accounts(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List available payments accounts for a customer.
 
@@ -267,7 +271,7 @@ class BillingSetupService:
             List of payments accounts
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -321,7 +325,8 @@ def create_billing_setup_tools(
 
     async def create_billing_setup(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         payments_account_id: str,
         start_date: str,
         end_date: Optional[str] = None,
@@ -359,7 +364,8 @@ def create_billing_setup_tools(
 
     async def list_billing_setups(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List billing setups for a customer.
@@ -379,7 +385,8 @@ def create_billing_setup_tools(
 
     async def get_billing_setup(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         billing_setup_id: str,
     ) -> Dict[str, Any]:
         """Get details of a specific billing setup.
@@ -399,7 +406,8 @@ def create_billing_setup_tools(
 
     async def list_payments_accounts(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List available payments accounts for a customer.
 

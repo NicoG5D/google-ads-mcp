@@ -23,7 +23,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -52,7 +52,8 @@ class AdParameterService:
     async def mutate_ad_parameters(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[Dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -72,7 +73,7 @@ class AdParameterService:
             Mutation results with resource names and any errors
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Convert operations
             mutate_operations = []
@@ -161,7 +162,8 @@ def create_ad_parameter_tools(
 
     async def mutate_ad_parameters(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[Dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,

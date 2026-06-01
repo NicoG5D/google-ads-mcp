@@ -26,6 +26,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
     format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -54,7 +55,8 @@ class CustomerManagerLinkService:
     async def update_manager_link_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         manager_customer_id: str,
         manager_link_id: int,
         status: ManagerLinkStatusEnum.ManagerLinkStatus,
@@ -79,7 +81,7 @@ class CustomerManagerLinkService:
             Updated link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             manager_customer_id = format_customer_id(manager_customer_id)
 
             # Create resource name
@@ -128,7 +130,8 @@ class CustomerManagerLinkService:
     async def move_manager_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         previous_manager_customer_id: str,
         previous_manager_link_id: int,
         new_manager_customer_id: str,
@@ -148,7 +151,7 @@ class CustomerManagerLinkService:
             New manager link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             previous_manager_customer_id = format_customer_id(
                 previous_manager_customer_id
             )
@@ -203,7 +206,8 @@ def create_customer_manager_link_tools(
 
     async def accept_manager_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         manager_customer_id: str,
         manager_link_id: int,
         validate_only: bool = False,
@@ -230,7 +234,8 @@ def create_customer_manager_link_tools(
 
     async def decline_manager_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         manager_customer_id: str,
         manager_link_id: int,
         validate_only: bool = False,
@@ -257,7 +262,8 @@ def create_customer_manager_link_tools(
 
     async def terminate_manager_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         manager_customer_id: str,
         manager_link_id: int,
         validate_only: bool = False,
@@ -284,7 +290,8 @@ def create_customer_manager_link_tools(
 
     async def move_client_to_new_manager(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         previous_manager_customer_id: str,
         previous_manager_link_id: int,
         new_manager_customer_id: str,

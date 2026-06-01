@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.customer_asset_set_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -50,7 +50,8 @@ class CustomerAssetSetService:
     async def create_customer_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -70,7 +71,7 @@ class CustomerAssetSetService:
             Created customer asset set link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             customer_resource = f"customers/{customer_id}"
 
             customer_asset_set = CustomerAssetSet()
@@ -110,7 +111,8 @@ class CustomerAssetSetService:
     async def remove_customer_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -128,7 +130,7 @@ class CustomerAssetSetService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/customerAssetSets/{asset_set_id}"
 
             operation = CustomerAssetSetOperation()
@@ -169,7 +171,8 @@ def create_customer_asset_set_tools(
 
     async def create_customer_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -205,7 +208,8 @@ def create_customer_asset_set_tools(
 
     async def remove_customer_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,

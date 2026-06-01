@@ -34,7 +34,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -63,7 +63,8 @@ class CustomAudienceService:
     async def create_custom_audience(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         members: List[Dict[str, Any]],
@@ -90,7 +91,7 @@ class CustomAudienceService:
             Created custom audience details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create custom audience
             custom_audience = CustomAudience()
@@ -168,7 +169,8 @@ class CustomAudienceService:
     async def update_custom_audience(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_audience_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -190,7 +192,7 @@ class CustomAudienceService:
             Updated custom audience details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = (
                 f"customers/{customer_id}/customAudiences/{custom_audience_id}"
             )
@@ -285,7 +287,8 @@ class CustomAudienceService:
     async def list_custom_audiences(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -301,7 +304,7 @@ class CustomAudienceService:
             List of custom audiences
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -355,7 +358,8 @@ class CustomAudienceService:
     async def get_custom_audience_details(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_audience_id: str,
     ) -> Dict[str, Any]:
         """Get detailed information about a custom audience including members.
@@ -369,7 +373,7 @@ class CustomAudienceService:
             Custom audience details with members
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -422,7 +426,8 @@ def create_custom_audience_tools(
 
     async def create_custom_audience(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         members: List[Dict[str, Any]],
@@ -463,7 +468,8 @@ def create_custom_audience_tools(
 
     async def update_custom_audience(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_audience_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -495,7 +501,8 @@ def create_custom_audience_tools(
 
     async def list_custom_audiences(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -518,7 +525,8 @@ def create_custom_audience_tools(
 
     async def get_custom_audience_details(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         custom_audience_id: str,
     ) -> Dict[str, Any]:
         """Get detailed information about a custom audience including all members.

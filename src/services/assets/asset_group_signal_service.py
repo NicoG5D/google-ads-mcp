@@ -22,7 +22,7 @@ from google.ads.googleads.v20.enums.types.response_content_type import (
 from google.ads.googleads.v20.common.types.criteria import AudienceInfo, SearchThemeInfo
 from google.ads.googleads.v20.common.types.policy import PolicyViolationKey
 
-from src.utils import resolve_enum
+from src.utils import resolve_enum, resolve_customer_id
 from src.sdk_client import get_sdk_client
 
 # Exception handling
@@ -52,7 +52,8 @@ class AssetGroupSignalService:
 
     def mutate_asset_group_signals(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[AssetGroupSignalOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -75,6 +76,7 @@ class AssetGroupSignalService:
             GoogleAdsException: If the request fails.
         """
         try:
+            customer_id = resolve_customer_id(customer_id)
             request = MutateAssetGroupSignalsRequest(
                 customer_id=customer_id,
                 operations=operations,
@@ -200,7 +202,8 @@ def register_asset_group_signal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_asset_group_signals(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -298,7 +301,8 @@ def register_asset_group_signal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_audience_signal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group: str,
         audience_resource_name: str,
         validate_only: bool = False,
@@ -337,7 +341,8 @@ def register_asset_group_signal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_search_theme_signal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group: str,
         search_theme: str,
         validate_only: bool = False,
@@ -376,7 +381,8 @@ def register_asset_group_signal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_asset_group_signal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> dict[str, Any]:

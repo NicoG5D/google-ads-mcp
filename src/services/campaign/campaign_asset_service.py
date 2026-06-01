@@ -22,7 +22,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -51,7 +51,8 @@ class CampaignAssetService:
     async def link_asset_to_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_id: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
@@ -69,7 +70,7 @@ class CampaignAssetService:
             Created campaign asset link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
             asset_resource = f"customers/{customer_id}/assets/{asset_id}"
 
@@ -112,7 +113,8 @@ class CampaignAssetService:
     async def link_multiple_assets_to_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_links: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -128,7 +130,7 @@ class CampaignAssetService:
             List of created campaign asset links
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create operations
@@ -193,7 +195,8 @@ class CampaignAssetService:
     async def list_campaign_assets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         field_type: Optional[AssetFieldTypeEnum.AssetFieldType] = None,
         include_system_managed: bool = False,
@@ -211,7 +214,7 @@ class CampaignAssetService:
             List of campaign assets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -292,7 +295,8 @@ class CampaignAssetService:
     async def remove_asset_from_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_id: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
@@ -310,7 +314,7 @@ class CampaignAssetService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Campaign asset resource names use ~ as separator
             campaign_asset_resource = f"customers/{customer_id}/campaignAssets/{campaign_id}~{asset_id}~{field_type}"
 
@@ -355,7 +359,8 @@ def create_campaign_asset_tools(
 
     async def link_asset_to_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_id: str,
         field_type: str,
@@ -397,7 +402,8 @@ def create_campaign_asset_tools(
 
     async def link_multiple_assets_to_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_links: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -422,7 +428,8 @@ def create_campaign_asset_tools(
 
     async def list_campaign_assets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         field_type: Optional[str] = None,
         include_system_managed: bool = False,
@@ -455,7 +462,8 @@ def create_campaign_asset_tools(
 
     async def remove_asset_from_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         asset_id: str,
         field_type: str,

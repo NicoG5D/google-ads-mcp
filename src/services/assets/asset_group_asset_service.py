@@ -21,7 +21,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -54,7 +54,8 @@ class AssetGroupAssetService:
     async def create_asset_group_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
@@ -79,7 +80,7 @@ class AssetGroupAssetService:
             Created asset group asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             asset_group_resource = (
                 f"customers/{customer_id}/assetGroups/{asset_group_id}"
             )
@@ -127,7 +128,8 @@ class AssetGroupAssetService:
     async def update_asset_group_asset_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
@@ -151,7 +153,7 @@ class AssetGroupAssetService:
             Updated asset group asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Construct resource name using the unique ~ delimiter format
             resource_name = (
@@ -198,7 +200,8 @@ class AssetGroupAssetService:
     async def remove_asset_group_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
@@ -220,7 +223,7 @@ class AssetGroupAssetService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Construct resource name using the unique ~ delimiter format
             resource_name = (
@@ -267,7 +270,8 @@ def create_asset_group_asset_tools(
 
     async def create_asset_group_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: str,
@@ -324,7 +328,8 @@ def create_asset_group_asset_tools(
 
     async def update_asset_group_asset_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: str,
@@ -377,7 +382,8 @@ def create_asset_group_asset_tools(
 
     async def remove_asset_group_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         asset_id: str,
         field_type: str,

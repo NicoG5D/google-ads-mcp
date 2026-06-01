@@ -33,7 +33,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -62,7 +62,8 @@ class UserListService:
     async def create_basic_user_list(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         membership_life_span: int = 30,
@@ -82,7 +83,7 @@ class UserListService:
             Created user list details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user list
             user_list = UserList()
@@ -135,7 +136,8 @@ class UserListService:
     async def create_crm_based_user_list(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         membership_life_span: int = 30,
@@ -157,7 +159,7 @@ class UserListService:
             Created user list details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user list
             user_list = UserList()
@@ -218,7 +220,8 @@ class UserListService:
     async def create_similar_user_list(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         seed_user_list_ids: List[str],
         description: Optional[str] = None,
@@ -236,7 +239,7 @@ class UserListService:
             Created user list details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user list
             user_list = UserList()
@@ -293,7 +296,8 @@ class UserListService:
     async def create_logical_user_list(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         rules: List[Dict[str, Any]],
         rule_operator: str = "ALL",
@@ -315,7 +319,7 @@ class UserListService:
             Created user list details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user list
             user_list = UserList()
@@ -386,7 +390,8 @@ class UserListService:
     async def update_user_list(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -408,7 +413,7 @@ class UserListService:
             Updated user list details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/userLists/{user_list_id}"
 
             # Create user list with resource name
@@ -482,7 +487,8 @@ def create_user_list_tools(
 
     async def create_basic_user_list(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         membership_life_span: int = 30,
@@ -511,7 +517,8 @@ def create_user_list_tools(
 
     async def create_crm_based_user_list(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: Optional[str] = None,
         membership_life_span: int = 30,
@@ -543,7 +550,8 @@ def create_user_list_tools(
 
     async def create_similar_user_list(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         seed_user_list_ids: List[str],
         description: Optional[str] = None,
@@ -569,7 +577,8 @@ def create_user_list_tools(
 
     async def create_logical_user_list(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         rules: List[Dict[str, Any]],
         rule_operator: str = "ALL",
@@ -610,7 +619,8 @@ def create_user_list_tools(
 
     async def update_user_list(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,

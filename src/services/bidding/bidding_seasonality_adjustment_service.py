@@ -33,7 +33,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -62,7 +62,8 @@ class BiddingSeasonalityAdjustmentService:
     async def create_bidding_seasonality_adjustment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         scope: str,
         start_date_time: str,
@@ -94,7 +95,7 @@ class BiddingSeasonalityAdjustmentService:
             Created bidding seasonality adjustment details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding seasonality adjustment
             adjustment = BiddingSeasonalityAdjustment()
@@ -164,7 +165,8 @@ class BiddingSeasonalityAdjustmentService:
     async def update_bidding_seasonality_adjustment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustment_resource_name: str,
         name: Optional[str] = None,
         start_date_time: Optional[str] = None,
@@ -188,7 +190,7 @@ class BiddingSeasonalityAdjustmentService:
             Updated bidding seasonality adjustment details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding seasonality adjustment with resource name
             adjustment = BiddingSeasonalityAdjustment()
@@ -254,7 +256,8 @@ class BiddingSeasonalityAdjustmentService:
     async def list_bidding_seasonality_adjustments(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         scope_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List bidding seasonality adjustments for a customer.
@@ -268,7 +271,7 @@ class BiddingSeasonalityAdjustmentService:
             List of bidding seasonality adjustments
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -348,7 +351,8 @@ class BiddingSeasonalityAdjustmentService:
     async def remove_bidding_seasonality_adjustment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustment_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a bidding seasonality adjustment.
@@ -362,7 +366,7 @@ class BiddingSeasonalityAdjustmentService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = BiddingSeasonalityAdjustmentOperation()
@@ -408,7 +412,8 @@ def create_bidding_seasonality_adjustment_tools(
 
     async def create_bidding_seasonality_adjustment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         scope: str,
         start_date_time: str,
@@ -455,7 +460,8 @@ def create_bidding_seasonality_adjustment_tools(
 
     async def update_bidding_seasonality_adjustment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustment_resource_name: str,
         name: Optional[str] = None,
         start_date_time: Optional[str] = None,
@@ -490,7 +496,8 @@ def create_bidding_seasonality_adjustment_tools(
 
     async def list_bidding_seasonality_adjustments(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         scope_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List bidding seasonality adjustments for a customer.
@@ -510,7 +517,8 @@ def create_bidding_seasonality_adjustment_tools(
 
     async def remove_bidding_seasonality_adjustment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustment_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a bidding seasonality adjustment.

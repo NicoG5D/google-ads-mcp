@@ -33,7 +33,7 @@ from google.ads.googleads.v20.services.types.offline_user_data_job_service impor
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -62,7 +62,8 @@ class OfflineUserDataJobService:
     async def create_customer_match_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a customer match job for uploading user data.
@@ -76,7 +77,7 @@ class OfflineUserDataJobService:
             Created job details with resource_name
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create offline user data job
             job = OfflineUserDataJob()
@@ -113,7 +114,8 @@ class OfflineUserDataJobService:
     async def add_user_data_operations(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
         user_data_list: List[Dict[str, Any]],
         enable_partial_failure: bool = True,
@@ -131,7 +133,7 @@ class OfflineUserDataJobService:
             Result of adding operations
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -242,7 +244,8 @@ class OfflineUserDataJobService:
     async def run_offline_user_data_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
     ) -> Dict[str, Any]:
         """Run an offline user data job.
@@ -256,7 +259,7 @@ class OfflineUserDataJobService:
             Job execution details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = RunOfflineUserDataJobRequest()
@@ -288,7 +291,8 @@ class OfflineUserDataJobService:
     async def get_offline_user_data_job(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
     ) -> Dict[str, Any]:
         """Get offline user data job details.
@@ -302,7 +306,7 @@ class OfflineUserDataJobService:
             Job details including status and match rate
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService to search for the job
             sdk_client = get_sdk_client()
@@ -355,7 +359,8 @@ class OfflineUserDataJobService:
     async def list_offline_user_data_jobs(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_type_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List offline user data jobs for a customer.
@@ -369,7 +374,7 @@ class OfflineUserDataJobService:
             List of offline user data jobs
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -443,7 +448,8 @@ def create_offline_user_data_job_tools(
 
     async def create_customer_match_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a customer match job for uploading user data.
@@ -463,7 +469,8 @@ def create_offline_user_data_job_tools(
 
     async def add_user_data_operations(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
         user_data_list: List[Dict[str, Any]],
         enable_partial_failure: bool = True,
@@ -496,7 +503,8 @@ def create_offline_user_data_job_tools(
 
     async def run_offline_user_data_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
     ) -> Dict[str, Any]:
         """Run an offline user data job to process uploaded data.
@@ -516,7 +524,8 @@ def create_offline_user_data_job_tools(
 
     async def get_offline_user_data_job(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_resource_name: str,
     ) -> Dict[str, Any]:
         """Get offline user data job details including status and match rate.
@@ -536,7 +545,8 @@ def create_offline_user_data_job_tools(
 
     async def list_offline_user_data_jobs(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         job_type_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List offline user data jobs for a customer.

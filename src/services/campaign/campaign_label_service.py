@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.campaign_label_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -49,7 +49,8 @@ class CampaignLabelService:
     async def apply_label_to_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -65,7 +66,7 @@ class CampaignLabelService:
             Created campaign label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
             label_resource = f"customers/{customer_id}/labels/{label_id}"
 
@@ -108,7 +109,8 @@ class CampaignLabelService:
     async def apply_labels_to_campaigns(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_label_pairs: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Apply labels to multiple campaigns.
@@ -122,7 +124,7 @@ class CampaignLabelService:
             List of created campaign label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -183,7 +185,8 @@ class CampaignLabelService:
     async def remove_label_from_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -199,7 +202,7 @@ class CampaignLabelService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_label_resource = (
                 f"customers/{customer_id}/campaignLabels/{campaign_id}~{label_id}"
             )
@@ -235,7 +238,8 @@ class CampaignLabelService:
     async def list_campaign_labels(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         label_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -251,7 +255,7 @@ class CampaignLabelService:
             List of campaign labels
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -338,7 +342,8 @@ def create_campaign_label_tools(
 
     async def apply_label_to_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -361,7 +366,8 @@ def create_campaign_label_tools(
 
     async def apply_labels_to_campaigns(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_label_pairs: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Apply labels to multiple campaigns.
@@ -383,7 +389,8 @@ def create_campaign_label_tools(
 
     async def remove_label_from_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         label_id: str,
     ) -> Dict[str, Any]:
@@ -406,7 +413,8 @@ def create_campaign_label_tools(
 
     async def list_campaign_labels(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         label_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:

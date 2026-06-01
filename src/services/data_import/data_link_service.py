@@ -27,7 +27,7 @@ from google.ads.googleads.v20.services.types.data_link_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -55,7 +55,8 @@ class DataLinkService:
     async def create_youtube_video_data_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         video_id: str,
         channel_id: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -72,7 +73,7 @@ class DataLinkService:
             Created data link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             youtube_video = YoutubeVideoIdentifier()
             youtube_video.video_id = video_id
@@ -108,7 +109,8 @@ class DataLinkService:
     async def update_data_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         status: str,
     ) -> Dict[str, Any]:
@@ -124,7 +126,7 @@ class DataLinkService:
             Updated data link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             request = UpdateDataLinkRequest()
             request.customer_id = customer_id
@@ -155,7 +157,8 @@ class DataLinkService:
     async def remove_data_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a data link.
@@ -169,7 +172,7 @@ class DataLinkService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             request = RemoveDataLinkRequest()
             request.customer_id = customer_id
@@ -197,7 +200,8 @@ class DataLinkService:
     async def list_data_links(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List data links for a customer.
@@ -211,7 +215,7 @@ class DataLinkService:
             List of data links
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             sdk_client = get_sdk_client()
             google_ads_service: GoogleAdsServiceClient = sdk_client.client.get_service(
@@ -258,7 +262,8 @@ def create_data_link_tools(
 
     async def create_youtube_video_data_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         video_id: str,
         channel_id: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -286,7 +291,8 @@ def create_data_link_tools(
 
     async def update_data_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         status: str,
     ) -> Dict[str, Any]:
@@ -312,7 +318,8 @@ def create_data_link_tools(
 
     async def remove_data_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a data link.
@@ -332,7 +339,8 @@ def create_data_link_tools(
 
     async def list_data_links(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List data links for a customer.

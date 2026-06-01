@@ -21,7 +21,7 @@ from google.ads.googleads.errors import GoogleAdsException
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -50,7 +50,8 @@ class ConversionAdjustmentUploadService:
     async def upload_conversion_adjustments(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustments: List[Dict[str, Any]],
         partial_failure: bool = True,
         validate_only: bool = False,
@@ -68,7 +69,7 @@ class ConversionAdjustmentUploadService:
             Upload results with success/failure counts
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create conversion adjustments
             conversion_adjustments = []
@@ -167,7 +168,8 @@ class ConversionAdjustmentUploadService:
     async def create_restatement_adjustment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         gclid: str,
         conversion_date_time: str,
@@ -216,7 +218,8 @@ class ConversionAdjustmentUploadService:
     async def create_retraction_adjustment(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         gclid: str,
         conversion_date_time: str,
@@ -267,7 +270,8 @@ def create_conversion_adjustment_upload_tools(
 
     async def upload_conversion_adjustments(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         adjustments: List[Dict[str, Any]],
         partial_failure: bool = True,
         validate_only: bool = False,
@@ -306,7 +310,8 @@ def create_conversion_adjustment_upload_tools(
 
     async def create_restatement_adjustment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         gclid: str,
         conversion_date_time: str,
@@ -344,7 +349,8 @@ def create_conversion_adjustment_upload_tools(
 
     async def create_retraction_adjustment(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         gclid: str,
         conversion_date_time: str,

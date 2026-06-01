@@ -23,7 +23,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -52,7 +52,8 @@ class AssetGroupService:
     async def create_asset_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         name: str,
         final_urls: List[str],
@@ -78,7 +79,7 @@ class AssetGroupService:
             Created asset group details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create asset group
@@ -130,7 +131,8 @@ class AssetGroupService:
     async def update_asset_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         name: Optional[str] = None,
         final_urls: Optional[List[str]] = None,
@@ -156,7 +158,7 @@ class AssetGroupService:
             Updated asset group details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/assetGroups/{asset_group_id}"
 
             # Create asset group with resource name
@@ -226,7 +228,8 @@ class AssetGroupService:
     async def list_asset_groups(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
@@ -244,7 +247,7 @@ class AssetGroupService:
             List of asset groups
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -322,7 +325,8 @@ class AssetGroupService:
     async def remove_asset_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
     ) -> Dict[str, Any]:
         """Remove an asset group.
@@ -336,7 +340,7 @@ class AssetGroupService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/assetGroups/{asset_group_id}"
 
             # Create operation
@@ -380,7 +384,8 @@ def create_asset_group_tools(
 
     async def create_asset_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         name: str,
         final_urls: List[str],
@@ -423,7 +428,8 @@ def create_asset_group_tools(
 
     async def update_asset_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
         name: Optional[str] = None,
         final_urls: Optional[List[str]] = None,
@@ -468,7 +474,8 @@ def create_asset_group_tools(
 
     async def list_asset_groups(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
@@ -494,7 +501,8 @@ def create_asset_group_tools(
 
     async def remove_asset_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_id: str,
     ) -> Dict[str, Any]:
         """Remove an asset group.

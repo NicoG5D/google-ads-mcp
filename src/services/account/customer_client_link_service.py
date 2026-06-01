@@ -27,7 +27,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -56,7 +56,8 @@ class CustomerClientLinkService:
     async def create_customer_client_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         client_customer: str,
         status: ManagerLinkStatusEnum.ManagerLinkStatus = ManagerLinkStatusEnum.ManagerLinkStatus.PENDING,
         hidden: bool = False,
@@ -74,7 +75,7 @@ class CustomerClientLinkService:
             Created customer client link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customer client link
             link = CustomerClientLink()
@@ -110,7 +111,8 @@ class CustomerClientLinkService:
     async def update_customer_client_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         link_resource_name: str,
         status: Optional[ManagerLinkStatusEnum.ManagerLinkStatus] = None,
         hidden: Optional[bool] = None,
@@ -128,7 +130,7 @@ class CustomerClientLinkService:
             Updated customer client link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customer client link with resource name
             link = CustomerClientLink()
@@ -179,7 +181,8 @@ class CustomerClientLinkService:
     async def list_customer_client_links(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List customer client links for a manager account.
@@ -193,7 +196,7 @@ class CustomerClientLinkService:
             List of customer client links
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -262,7 +265,8 @@ def create_customer_client_link_tools(
 
     async def create_customer_client_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         client_customer: str,
         status: str = "PENDING",
         hidden: bool = False,
@@ -293,7 +297,8 @@ def create_customer_client_link_tools(
 
     async def update_customer_client_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         link_resource_name: str,
         status: Optional[str] = None,
         hidden: Optional[bool] = None,
@@ -326,7 +331,8 @@ def create_customer_client_link_tools(
 
     async def list_customer_client_links(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List customer client links for a manager account.

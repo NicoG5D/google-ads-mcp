@@ -37,7 +37,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -66,7 +66,8 @@ class AudienceService:
     async def create_combined_audience(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         dimensions: List[Dict[str, Any]],
@@ -88,7 +89,7 @@ class AudienceService:
             Created audience details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create audience
             audience = Audience()
@@ -337,7 +338,8 @@ class AudienceService:
     async def update_audience(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -357,7 +359,7 @@ class AudienceService:
             Updated audience details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/audiences/{audience_id}"
 
             # Create audience with resource name
@@ -415,7 +417,8 @@ class AudienceService:
     async def list_audiences(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
@@ -431,7 +434,7 @@ class AudienceService:
             List of audiences
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -488,7 +491,8 @@ class AudienceService:
     async def remove_audience(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_id: str,
     ) -> Dict[str, Any]:
         """Remove an audience.
@@ -522,7 +526,8 @@ def create_audience_tools(
 
     async def create_combined_audience(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         description: str,
         dimensions: List[Dict[str, Any]],
@@ -566,7 +571,8 @@ def create_audience_tools(
 
     async def update_audience(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -595,7 +601,8 @@ def create_audience_tools(
 
     async def list_audiences(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
@@ -618,7 +625,8 @@ def create_audience_tools(
 
     async def remove_audience(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_id: str,
     ) -> Dict[str, Any]:
         """Remove an audience.

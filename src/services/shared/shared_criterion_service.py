@@ -26,7 +26,7 @@ from google.ads.googleads.v20.services.types.shared_criterion_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -55,7 +55,8 @@ class SharedCriterionService:
     async def add_keywords_to_shared_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         keywords: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -71,7 +72,7 @@ class SharedCriterionService:
             List of created shared criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             shared_set_resource = f"customers/{customer_id}/sharedSets/{shared_set_id}"
 
             # Create operations
@@ -142,7 +143,8 @@ class SharedCriterionService:
     async def add_placements_to_shared_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         placement_urls: List[str],
     ) -> List[Dict[str, Any]]:
@@ -158,7 +160,7 @@ class SharedCriterionService:
             List of created shared criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             shared_set_resource = f"customers/{customer_id}/sharedSets/{shared_set_id}"
 
             # Create operations
@@ -224,7 +226,8 @@ class SharedCriterionService:
     async def list_shared_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         criterion_type: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -240,7 +243,7 @@ class SharedCriterionService:
             List of shared criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             shared_set_resource = f"customers/{customer_id}/sharedSets/{shared_set_id}"
 
             # Use GoogleAdsService for search
@@ -302,7 +305,8 @@ class SharedCriterionService:
     async def remove_shared_criterion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a criterion from a shared set.
@@ -316,7 +320,7 @@ class SharedCriterionService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = SharedCriterionOperation()
@@ -359,7 +363,8 @@ def create_shared_criterion_tools(
 
     async def add_keywords_to_shared_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         keywords: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
@@ -384,7 +389,8 @@ def create_shared_criterion_tools(
 
     async def add_placements_to_shared_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         placement_urls: List[str],
     ) -> List[Dict[str, Any]]:
@@ -407,7 +413,8 @@ def create_shared_criterion_tools(
 
     async def list_shared_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         criterion_type: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -430,7 +437,8 @@ def create_shared_criterion_tools(
 
     async def remove_shared_criterion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a criterion from a shared set.

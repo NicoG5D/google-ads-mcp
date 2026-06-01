@@ -15,7 +15,7 @@ from google.ads.googleads.v20.services.types.google_ads_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -44,7 +44,8 @@ class SearchService:
     async def search_campaigns(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 1000,
     ) -> List[Dict[str, Any]]:
@@ -60,7 +61,7 @@ class SearchService:
             List of campaign details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Build query
             query = """
@@ -114,7 +115,8 @@ class SearchService:
     async def search_ad_groups(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 1000,
@@ -132,7 +134,7 @@ class SearchService:
             List of ad group details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Build query
             query = """
@@ -194,7 +196,8 @@ class SearchService:
     async def search_keywords(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         include_negative: bool = False,
         limit: int = 1000,
@@ -212,7 +215,7 @@ class SearchService:
             List of keyword details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Build query
             query = """
@@ -272,7 +275,8 @@ class SearchService:
     async def execute_query(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         page_size: int = 1000,
     ) -> List[Dict[str, Any]]:
@@ -288,7 +292,7 @@ class SearchService:
             List of query results as dictionaries
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = SearchGoogleAdsRequest()
@@ -375,7 +379,8 @@ def create_search_tools(service: SearchService) -> List[Callable[..., Awaitable[
 
     async def search_campaigns(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 1000,
     ) -> List[Dict[str, Any]]:
@@ -398,7 +403,8 @@ def create_search_tools(service: SearchService) -> List[Callable[..., Awaitable[
 
     async def search_ad_groups(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 1000,
@@ -424,7 +430,8 @@ def create_search_tools(service: SearchService) -> List[Callable[..., Awaitable[
 
     async def search_keywords(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         include_negative: bool = False,
         limit: int = 1000,
@@ -450,7 +457,8 @@ def create_search_tools(service: SearchService) -> List[Callable[..., Awaitable[
 
     async def execute_query(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         page_size: int = 1000,
     ) -> List[Dict[str, Any]]:

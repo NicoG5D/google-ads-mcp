@@ -1,5 +1,6 @@
 """Google Ads SDK client for MCP server."""
 
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -73,6 +74,12 @@ class GoogleAdsSdkClient:
         if self._client:
             self._client = None
             logger.info("Google Ads SDK client closed")
+
+
+def get_default_customer_id() -> Optional[str]:
+    """Return the default customer ID from GOOGLE_ADS_CUSTOMER_ID env var, or None."""
+    value = os.environ.get("GOOGLE_ADS_CUSTOMER_ID", "").strip()
+    return value.replace("-", "") if value else None
 
 
 # Global client instance

@@ -24,7 +24,7 @@ from google.ads.googleads.v20.services.types.smart_campaign_suggest_service impo
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class SmartCampaignService:
     async def suggest_budget_options(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         country_code: Optional[str] = None,
         language_code: Optional[str] = None,
@@ -71,7 +72,7 @@ class SmartCampaignService:
             Budget suggestions with low, recommended, and high options
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = SuggestSmartCampaignBudgetOptionsRequest()
@@ -147,7 +148,8 @@ class SmartCampaignService:
     async def suggest_keyword_themes(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword_text: Optional[str] = None,
         business_name: Optional[str] = None,
         final_url: Optional[str] = None,
@@ -169,7 +171,7 @@ class SmartCampaignService:
             List of keyword theme suggestions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = SuggestKeywordThemesRequest()
@@ -260,7 +262,8 @@ class SmartCampaignService:
     async def suggest_ad_content(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         business_name: str,
         final_url: str,
         language_id: Optional[str] = None,
@@ -280,7 +283,7 @@ class SmartCampaignService:
             Suggested ad content with headlines and descriptions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = SuggestSmartCampaignAdRequest()
@@ -356,7 +359,8 @@ def create_smart_campaign_tools(
 
     async def suggest_budget_options(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         country_code: Optional[str] = None,
         language_code: Optional[str] = None,
@@ -384,7 +388,8 @@ def create_smart_campaign_tools(
 
     async def suggest_keyword_themes(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword_text: Optional[str] = None,
         business_name: Optional[str] = None,
         final_url: Optional[str] = None,
@@ -420,7 +425,8 @@ def create_smart_campaign_tools(
 
     async def suggest_ad_content(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         business_name: str,
         final_url: str,
         language_id: Optional[str] = None,

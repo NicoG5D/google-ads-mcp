@@ -16,7 +16,7 @@ from google.ads.googleads.v20.services.types.brand_suggestion_service import (
 )
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_customer_id
+from src.utils import resolve_customer_id
 
 
 class BrandSuggestionService:
@@ -39,7 +39,8 @@ class BrandSuggestionService:
 
     def suggest_brands(  # pyright: ignore[reportUnusedFunction]
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         brand_prefix: str,
         selected_brands: Optional[List[str]] = None,
     ) -> SuggestBrandsResponse:
@@ -53,7 +54,7 @@ class BrandSuggestionService:
         Returns:
             SuggestBrandsResponse: The response containing brand suggestions
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         request = SuggestBrandsRequest(
             customer_id=customer_id,
             brand_prefix=brand_prefix,
@@ -67,7 +68,8 @@ def register_brand_suggestion_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def suggest_brands(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         brand_prefix: str,
         selected_brands: list[str] = [],
     ) -> str:

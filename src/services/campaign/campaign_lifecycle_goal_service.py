@@ -27,7 +27,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -59,7 +59,8 @@ class CampaignLifecycleGoalService:
     async def create_campaign_lifecycle_goal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         optimization_mode: CustomerAcquisitionOptimizationModeEnum.CustomerAcquisitionOptimizationMode,
         value: Optional[float] = None,
@@ -81,9 +82,11 @@ class CampaignLifecycleGoalService:
             Configuration result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
-            resource_name = f"customers/{customer_id}/campaignLifecycleGoal/{campaign_id}"
+            resource_name = (
+                f"customers/{customer_id}/campaignLifecycleGoal/{campaign_id}"
+            )
 
             goal_settings = CustomerAcquisitionGoalSettings()
             goal_settings.optimization_mode = optimization_mode
@@ -135,7 +138,8 @@ class CampaignLifecycleGoalService:
     async def update_campaign_lifecycle_goal(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         optimization_mode: Optional[
             CustomerAcquisitionOptimizationModeEnum.CustomerAcquisitionOptimizationMode
@@ -159,8 +163,10 @@ class CampaignLifecycleGoalService:
             Configuration result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/campaignLifecycleGoal/{campaign_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/campaignLifecycleGoal/{campaign_id}"
+            )
 
             lifecycle_goal = CampaignLifecycleGoal()
             lifecycle_goal.resource_name = resource_name
@@ -243,7 +249,8 @@ def create_campaign_lifecycle_goal_tools(
 
     async def create_campaign_lifecycle_goal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         optimization_mode: str,
         value: Optional[float] = None,
@@ -293,7 +300,8 @@ def create_campaign_lifecycle_goal_tools(
 
     async def update_campaign_lifecycle_goal(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         optimization_mode: Optional[str] = None,
         value: Optional[float] = None,

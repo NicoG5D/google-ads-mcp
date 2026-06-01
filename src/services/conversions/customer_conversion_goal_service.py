@@ -24,7 +24,7 @@ from google.ads.googleads.errors import GoogleAdsException
 from google.protobuf import field_mask_pb2
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_ads_error, format_customer_id, get_logger
+from src.utils import format_ads_error, resolve_customer_id, get_logger
 
 logger = get_logger(__name__)
 
@@ -50,7 +50,8 @@ class CustomerConversionGoalService:
     async def mutate_customer_conversion_goals(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[Dict[str, Any]],
         validate_only: bool = False,
     ) -> Dict[str, Any]:
@@ -66,7 +67,7 @@ class CustomerConversionGoalService:
             Mutation results with resource names
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Convert operations
             mutate_operations = []
@@ -155,7 +156,8 @@ def create_customer_conversion_goal_tools(
 
     async def mutate_customer_conversion_goals(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[Dict[str, Any]],
         validate_only: bool = False,
     ) -> Dict[str, Any]:

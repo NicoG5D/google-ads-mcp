@@ -23,7 +23,7 @@ from google.ads.googleads.v20.services.types.conversion_upload_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -66,7 +66,8 @@ class ConversionUploadService:
     async def upload_click_conversions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversions: List[Dict[str, Any]],
         partial_failure: bool = True,
     ) -> Dict[str, Any]:
@@ -90,7 +91,7 @@ class ConversionUploadService:
             Upload results including successful and failed conversions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create click conversions
             click_conversions = []
@@ -175,7 +176,8 @@ class ConversionUploadService:
     async def upload_call_conversions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversions: List[Dict[str, Any]],
         partial_failure: bool = True,
     ) -> Dict[str, Any]:
@@ -197,7 +199,7 @@ class ConversionUploadService:
             Upload results including successful and failed conversions
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create call conversions
             call_conversions = []
@@ -256,7 +258,8 @@ def create_conversion_upload_tools(
 
     async def upload_click_conversions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversions: List[Dict[str, Any]],
         partial_failure: bool = True,
     ) -> Dict[str, Any]:
@@ -297,7 +300,8 @@ def create_conversion_upload_tools(
 
     async def upload_call_conversions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversions: List[Dict[str, Any]],
         partial_failure: bool = True,
     ) -> Dict[str, Any]:

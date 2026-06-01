@@ -23,7 +23,7 @@ from google.ads.googleads.v20.services.services.google_ads_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -52,7 +52,8 @@ class AdGroupAssetSetService:
     async def create_ad_group_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_resource_name: str,
         asset_set_resource_name: str,
     ) -> Dict[str, Any]:
@@ -68,7 +69,7 @@ class AdGroupAssetSetService:
             Created ad group asset set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create ad group asset set
             ad_group_asset_set = AdGroupAssetSet()
@@ -109,7 +110,8 @@ class AdGroupAssetSetService:
     async def list_ad_group_asset_sets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         asset_set_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -125,7 +127,7 @@ class AdGroupAssetSetService:
             List of ad group asset sets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -202,7 +204,8 @@ class AdGroupAssetSetService:
     async def remove_ad_group_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_asset_set_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group asset set.
@@ -216,7 +219,7 @@ class AdGroupAssetSetService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AdGroupAssetSetOperation()
@@ -260,7 +263,8 @@ def create_ad_group_asset_set_tools(
 
     async def create_ad_group_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_resource_name: str,
         asset_set_resource_name: str,
     ) -> Dict[str, Any]:
@@ -283,7 +287,8 @@ def create_ad_group_asset_set_tools(
 
     async def list_ad_group_asset_sets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         asset_set_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -306,7 +311,8 @@ def create_ad_group_asset_set_tools(
 
     async def remove_ad_group_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_asset_set_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group asset set.

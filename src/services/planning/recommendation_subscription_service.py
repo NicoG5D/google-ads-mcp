@@ -29,7 +29,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -61,7 +61,8 @@ class RecommendationSubscriptionService:
     async def create_recommendation_subscription(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_type: RecommendationTypeEnum.RecommendationType,
         status: RecommendationSubscriptionStatusEnum.RecommendationSubscriptionStatus,
         partial_failure: bool = False,
@@ -83,7 +84,7 @@ class RecommendationSubscriptionService:
             Created recommendation subscription details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             subscription = RecommendationSubscription()
             subscription.type_ = recommendation_type
@@ -122,7 +123,8 @@ class RecommendationSubscriptionService:
     async def update_recommendation_subscription(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_type: str,
         status: RecommendationSubscriptionStatusEnum.RecommendationSubscriptionStatus,
         partial_failure: bool = False,
@@ -144,7 +146,7 @@ class RecommendationSubscriptionService:
             Updated recommendation subscription details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/recommendationSubscriptions/{recommendation_type}"
 
             subscription = RecommendationSubscription()
@@ -191,7 +193,8 @@ def create_recommendation_subscription_tools(
 
     async def create_recommendation_subscription(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_type: str,
         status: str = "ENABLED",
         partial_failure: bool = False,
@@ -242,7 +245,8 @@ def create_recommendation_subscription_tools(
 
     async def update_recommendation_subscription(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_type: str,
         status: str,
         partial_failure: bool = False,

@@ -24,7 +24,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -56,7 +56,8 @@ class CampaignGroupService:
     async def create_campaign_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         status: CampaignGroupStatusEnum.CampaignGroupStatus = CampaignGroupStatusEnum.CampaignGroupStatus.ENABLED,
         partial_failure: bool = False,
@@ -78,7 +79,7 @@ class CampaignGroupService:
             Created campaign group details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             campaign_group = CampaignGroup()
             campaign_group.name = name
@@ -94,8 +95,8 @@ class CampaignGroupService:
             request.validate_only = validate_only
             request.response_content_type = response_content_type
 
-            response: MutateCampaignGroupsResponse = (
-                self.client.mutate_campaign_groups(request=request)
+            response: MutateCampaignGroupsResponse = self.client.mutate_campaign_groups(
+                request=request
             )
 
             await ctx.log(
@@ -117,7 +118,8 @@ class CampaignGroupService:
     async def update_campaign_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_group_id: str,
         name: Optional[str] = None,
         status: Optional[CampaignGroupStatusEnum.CampaignGroupStatus] = None,
@@ -141,8 +143,10 @@ class CampaignGroupService:
             Updated campaign group details
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/campaignGroups/{campaign_group_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/campaignGroups/{campaign_group_id}"
+            )
 
             campaign_group = CampaignGroup()
             campaign_group.resource_name = resource_name
@@ -166,8 +170,8 @@ class CampaignGroupService:
             request.validate_only = validate_only
             request.response_content_type = response_content_type
 
-            response: MutateCampaignGroupsResponse = (
-                self.client.mutate_campaign_groups(request=request)
+            response: MutateCampaignGroupsResponse = self.client.mutate_campaign_groups(
+                request=request
             )
 
             await ctx.log(
@@ -189,7 +193,8 @@ class CampaignGroupService:
     async def remove_campaign_group(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_group_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -207,8 +212,10 @@ class CampaignGroupService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/campaignGroups/{campaign_group_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/campaignGroups/{campaign_group_id}"
+            )
 
             operation = CampaignGroupOperation()
             operation.remove = resource_name
@@ -246,7 +253,8 @@ def create_campaign_group_tools(
 
     async def create_campaign_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         status: str = "ENABLED",
         partial_failure: bool = False,
@@ -289,7 +297,8 @@ def create_campaign_group_tools(
 
     async def update_campaign_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_group_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,
@@ -335,7 +344,8 @@ def create_campaign_group_tools(
 
     async def remove_campaign_group(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_group_id: str,
         partial_failure: bool = False,
         validate_only: bool = False,

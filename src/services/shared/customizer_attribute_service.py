@@ -30,7 +30,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -59,7 +59,8 @@ class CustomizerAttributeService:
     async def create_customizer_attribute(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         attribute_type: str,
         status: str = "ENABLED",
@@ -77,7 +78,7 @@ class CustomizerAttributeService:
             Created customizer attribute details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customizer attribute
             attribute = CustomizerAttribute()
@@ -120,7 +121,8 @@ class CustomizerAttributeService:
     async def update_customizer_attribute(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attribute_resource_name: str,
         status: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -136,7 +138,7 @@ class CustomizerAttributeService:
             Updated customizer attribute details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create customizer attribute with resource name
             attribute = CustomizerAttribute()
@@ -188,7 +190,8 @@ class CustomizerAttributeService:
     async def list_customizer_attributes(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
     ) -> List[Dict[str, Any]]:
         """List customizer attributes.
@@ -202,7 +205,7 @@ class CustomizerAttributeService:
             List of customizer attributes
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -259,7 +262,8 @@ class CustomizerAttributeService:
     async def remove_customizer_attribute(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attribute_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a customizer attribute.
@@ -273,7 +277,7 @@ class CustomizerAttributeService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CustomizerAttributeOperation()
@@ -316,7 +320,8 @@ def create_customizer_attribute_tools(
 
     async def create_customizer_attribute(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         attribute_type: str,
         status: str = "ENABLED",
@@ -342,7 +347,8 @@ def create_customizer_attribute_tools(
 
     async def update_customizer_attribute(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attribute_resource_name: str,
         status: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -365,7 +371,8 @@ def create_customizer_attribute_tools(
 
     async def list_customizer_attributes(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
     ) -> List[Dict[str, Any]]:
         """List customizer attributes.
@@ -385,7 +392,8 @@ def create_customizer_attribute_tools(
 
     async def remove_customizer_attribute(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attribute_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a customizer attribute.

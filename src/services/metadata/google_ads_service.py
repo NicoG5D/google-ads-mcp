@@ -28,7 +28,7 @@ from google.ads.googleads.v20.services.types.google_ads_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class GoogleAdsService:
     async def search(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         page_size: int = 1000,
         page_token: Optional[str] = None,
@@ -79,7 +80,7 @@ class GoogleAdsService:
             Dictionary containing results and pagination info
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create the request
             request = SearchGoogleAdsRequest()
@@ -132,7 +133,8 @@ class GoogleAdsService:
     async def search_stream(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         summary_row_setting: SummaryRowSettingEnum.SummaryRowSetting = SummaryRowSettingEnum.SummaryRowSetting.NO_SUMMARY_ROW,
     ) -> List[Dict[str, Any]]:
@@ -150,7 +152,7 @@ class GoogleAdsService:
             List of all results
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create the request
             request = SearchGoogleAdsStreamRequest()
@@ -197,7 +199,8 @@ class GoogleAdsService:
     async def mutate(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[MutateOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -220,7 +223,7 @@ class GoogleAdsService:
             Mutation results
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create the request
             request = MutateGoogleAdsRequest()
@@ -272,7 +275,8 @@ def create_google_ads_tools(
 
     async def search_google_ads(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         page_size: int = 1000,
         page_token: Optional[str] = None,
@@ -315,7 +319,8 @@ def create_google_ads_tools(
 
     async def search_google_ads_stream(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         query: str,
         include_summary_row: bool = False,
     ) -> List[Dict[str, Any]]:
@@ -353,7 +358,8 @@ def create_google_ads_tools(
 
     async def atomic_mutate(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[Dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,

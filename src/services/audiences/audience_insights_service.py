@@ -35,7 +35,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -64,7 +64,8 @@ class AudienceInsightsService:
     async def generate_insights_finder_report(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         baseline_audience_countries: List[str],
         specific_audience_countries: List[str],
         dimensions: List[str],
@@ -92,7 +93,7 @@ class AudienceInsightsService:
             Insights report with audience comparisons
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create baseline audience
             baseline_audience = BasicInsightsAudience()
@@ -189,7 +190,8 @@ class AudienceInsightsService:
     async def generate_audience_composition_insights(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_countries: List[str],
         dimensions: List[str],
         audience_ages: Optional[List[str]] = None,
@@ -213,7 +215,7 @@ class AudienceInsightsService:
             Audience composition insights
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create audience
             audience = InsightsAudience()
@@ -313,7 +315,8 @@ class AudienceInsightsService:
     async def generate_suggested_targeting_insights(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_countries: List[str],
         audience_ages: Optional[List[str]] = None,
         audience_genders: Optional[List[str]] = None,
@@ -333,7 +336,7 @@ class AudienceInsightsService:
             Suggested targeting insights
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create audience
             audience = InsightsAudience()
@@ -407,7 +410,8 @@ def create_audience_insights_tools(
 
     async def generate_insights_finder_report(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         baseline_audience_countries: List[str],
         specific_audience_countries: List[str],
         dimensions: List[str],
@@ -448,7 +452,8 @@ def create_audience_insights_tools(
 
     async def generate_audience_composition_insights(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_countries: List[str],
         dimensions: List[str],
         audience_ages: Optional[List[str]] = None,
@@ -483,7 +488,8 @@ def create_audience_insights_tools(
 
     async def generate_suggested_targeting_insights(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         audience_countries: List[str],
         audience_ages: Optional[List[str]] = None,
         audience_genders: Optional[List[str]] = None,

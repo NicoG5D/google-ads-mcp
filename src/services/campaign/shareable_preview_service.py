@@ -17,7 +17,7 @@ from google.ads.googleads.v20.services.types.shareable_preview_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -48,7 +48,8 @@ class ShareablePreviewService:
     async def generate_shareable_previews(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_ids: Sequence[int],
     ) -> Dict[str, Any]:
         """Generate shareable preview URLs for asset groups.
@@ -62,7 +63,7 @@ class ShareablePreviewService:
             Response containing shareable preview URLs or partial failure errors
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             shareable_previews: List[ShareablePreview] = []
             for asset_group_id in asset_group_ids:
@@ -106,7 +107,8 @@ def create_shareable_preview_tools(
 
     async def generate_shareable_previews(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_group_ids: List[int],
     ) -> Dict[str, Any]:
         """Generate shareable preview URLs for asset groups.

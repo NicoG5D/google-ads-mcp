@@ -28,7 +28,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -57,7 +57,8 @@ class CampaignCriterionService:
     async def add_location_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         location_ids: List[str],
         negative: bool = False,
@@ -77,7 +78,7 @@ class CampaignCriterionService:
             List of created campaign criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create operations
@@ -130,7 +131,8 @@ class CampaignCriterionService:
     async def add_language_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         language_ids: List[str],
     ) -> Dict[str, Any]:
@@ -146,7 +148,7 @@ class CampaignCriterionService:
             List of created campaign criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create operations
@@ -198,7 +200,8 @@ class CampaignCriterionService:
     async def add_device_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         device_types: List[DeviceEnum.Device],
         bid_modifiers: Optional[Dict[str, float]] = None,
@@ -216,7 +219,7 @@ class CampaignCriterionService:
             List of created campaign criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create operations
@@ -273,7 +276,8 @@ class CampaignCriterionService:
     async def add_negative_keyword_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         keywords: List[Dict[str, str]],
     ) -> Dict[str, Any]:
@@ -289,7 +293,7 @@ class CampaignCriterionService:
             List of created campaign criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             # Create operations
@@ -342,7 +346,8 @@ class CampaignCriterionService:
     async def remove_campaign_criterion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign criterion.
@@ -356,7 +361,7 @@ class CampaignCriterionService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CampaignCriterionOperation()
@@ -401,7 +406,8 @@ def create_campaign_criterion_tools(
 
     async def add_location_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         location_ids: List[str],
         negative: bool = False,
@@ -430,7 +436,8 @@ def create_campaign_criterion_tools(
 
     async def add_language_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         language_ids: List[str],
     ) -> Dict[str, Any]:
@@ -453,7 +460,8 @@ def create_campaign_criterion_tools(
 
     async def add_device_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         device_types: List[str],
         bid_modifiers: Optional[Dict[str, float]] = None,
@@ -486,7 +494,8 @@ def create_campaign_criterion_tools(
 
     async def add_negative_keyword_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         keywords: List[Dict[str, str]],
     ) -> Dict[str, Any]:
@@ -513,7 +522,8 @@ def create_campaign_criterion_tools(
 
     async def remove_campaign_criterion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign criterion.

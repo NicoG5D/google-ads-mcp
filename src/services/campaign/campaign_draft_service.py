@@ -24,7 +24,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class CampaignDraftService:
     async def create_campaign_draft(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         base_campaign: str,
         draft_name: str,
     ) -> Dict[str, Any]:
@@ -69,7 +70,7 @@ class CampaignDraftService:
             Created campaign draft details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create campaign draft
             draft = CampaignDraft()
@@ -110,7 +111,8 @@ class CampaignDraftService:
     async def update_campaign_draft(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
         draft_name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -126,7 +128,7 @@ class CampaignDraftService:
             Updated campaign draft details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create campaign draft with resource name
             draft = CampaignDraft()
@@ -176,7 +178,8 @@ class CampaignDraftService:
     async def list_campaign_drafts(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         base_campaign_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List campaign drafts for a customer.
@@ -190,7 +193,7 @@ class CampaignDraftService:
             List of campaign drafts
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -255,7 +258,8 @@ class CampaignDraftService:
     async def promote_campaign_draft(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> Dict[str, Any]:
         """Promote a campaign draft by applying changes to the base campaign.
@@ -269,7 +273,7 @@ class CampaignDraftService:
             Promotion operation details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = PromoteCampaignDraftRequest()
@@ -301,7 +305,8 @@ class CampaignDraftService:
     async def list_campaign_draft_async_errors(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> List[Dict[str, Any]]:
         """List async errors for a campaign draft.
@@ -315,7 +320,7 @@ class CampaignDraftService:
             List of async errors
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create request
             request = ListCampaignDraftAsyncErrorsRequest()
@@ -355,7 +360,8 @@ class CampaignDraftService:
     async def remove_campaign_draft(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign draft.
@@ -369,7 +375,7 @@ class CampaignDraftService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CampaignDraftOperation()
@@ -415,7 +421,8 @@ def create_campaign_draft_tools(
 
     async def create_campaign_draft(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         base_campaign: str,
         draft_name: str,
     ) -> Dict[str, Any]:
@@ -438,7 +445,8 @@ def create_campaign_draft_tools(
 
     async def update_campaign_draft(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
         draft_name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -461,7 +469,8 @@ def create_campaign_draft_tools(
 
     async def list_campaign_drafts(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         base_campaign_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List campaign drafts for a customer.
@@ -481,7 +490,8 @@ def create_campaign_draft_tools(
 
     async def promote_campaign_draft(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> Dict[str, Any]:
         """Promote a campaign draft by applying all changes to the base campaign.
@@ -501,7 +511,8 @@ def create_campaign_draft_tools(
 
     async def list_campaign_draft_async_errors(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> List[Dict[str, Any]]:
         """List async errors that occurred during campaign draft operations.
@@ -521,7 +532,8 @@ def create_campaign_draft_tools(
 
     async def remove_campaign_draft(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         draft_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a campaign draft.

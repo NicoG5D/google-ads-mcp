@@ -27,7 +27,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -56,7 +56,8 @@ class SharedSetService:
     async def create_shared_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         type: SharedSetTypeEnum.SharedSetType = SharedSetTypeEnum.SharedSetType.NEGATIVE_KEYWORDS,
         status: SharedSetStatusEnum.SharedSetStatus = SharedSetStatusEnum.SharedSetStatus.ENABLED,
@@ -74,7 +75,7 @@ class SharedSetService:
             Created shared set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create shared set
             shared_set = SharedSet()
@@ -116,7 +117,8 @@ class SharedSetService:
     async def update_shared_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         name: Optional[str] = None,
         status: Optional[SharedSetStatusEnum.SharedSetStatus] = None,
@@ -134,7 +136,7 @@ class SharedSetService:
             Updated shared set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/sharedSets/{shared_set_id}"
 
             # Create shared set with resource name
@@ -186,7 +188,8 @@ class SharedSetService:
     async def list_shared_sets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -202,7 +205,7 @@ class SharedSetService:
             List of shared sets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -258,7 +261,8 @@ class SharedSetService:
     async def attach_shared_set_to_campaigns(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         campaign_ids: List[str],
     ) -> Dict[str, Any]:
@@ -274,7 +278,7 @@ class SharedSetService:
             Attachment result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use CampaignSharedSetService
             sdk_client = get_sdk_client()
@@ -344,7 +348,8 @@ def create_shared_set_tools(
 
     async def create_shared_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         type: str = "NEGATIVE_KEYWORDS",
         status: str = "ENABLED",
@@ -376,7 +381,8 @@ def create_shared_set_tools(
 
     async def update_shared_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,
@@ -409,7 +415,8 @@ def create_shared_set_tools(
 
     async def list_shared_sets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         type_filter: Optional[str] = None,
         status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -432,7 +439,8 @@ def create_shared_set_tools(
 
     async def attach_shared_set_to_campaigns(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
         campaign_ids: List[str],
     ) -> Dict[str, Any]:

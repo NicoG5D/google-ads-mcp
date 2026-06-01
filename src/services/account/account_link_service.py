@@ -35,7 +35,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -64,7 +64,8 @@ class AccountLinkService:
     async def create_account_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         app_analytics_provider_id: int,
         app_id: str,
         app_vendor: MobileAppVendorEnum.MobileAppVendor,
@@ -84,7 +85,7 @@ class AccountLinkService:
             Created account link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create third party app analytics identifier
             third_party_analytics = ThirdPartyAppAnalyticsLinkIdentifier()
@@ -130,7 +131,8 @@ class AccountLinkService:
     async def update_account_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_link_resource_name: str,
         status: Optional[AccountLinkStatusEnum.AccountLinkStatus] = None,
     ) -> Dict[str, Any]:
@@ -146,7 +148,7 @@ class AccountLinkService:
             Updated account link details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create account link with resource name
             account_link = AccountLink()
@@ -193,7 +195,8 @@ class AccountLinkService:
     async def list_account_links(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
     ) -> List[Dict[str, Any]]:
         """List account links.
@@ -207,7 +210,7 @@ class AccountLinkService:
             List of account links
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -257,7 +260,8 @@ class AccountLinkService:
     async def remove_account_link(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_link_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an account link.
@@ -271,7 +275,7 @@ class AccountLinkService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AccountLinkOperation()
@@ -314,7 +318,8 @@ def create_account_link_tools(
 
     async def create_account_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         app_analytics_provider_id: int,
         app_id: str,
         app_vendor: str,
@@ -351,7 +356,8 @@ def create_account_link_tools(
 
     async def update_account_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_link_resource_name: str,
         status: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -381,7 +387,8 @@ def create_account_link_tools(
 
     async def list_account_links(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         include_removed: bool = False,
     ) -> List[Dict[str, Any]]:
         """List account links for a customer.
@@ -401,7 +408,8 @@ def create_account_link_tools(
 
     async def remove_account_link(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         account_link_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an account link.

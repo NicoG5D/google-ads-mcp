@@ -19,7 +19,7 @@ from google.ads.googleads.v20.services.types.customer_sk_ad_network_conversion_v
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class CustomerSkAdNetworkConversionValueSchemaService:
     async def mutate_skan_conversion_value_schema(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
         enable_warnings: bool = False,
@@ -72,7 +73,7 @@ class CustomerSkAdNetworkConversionValueSchemaService:
             Mutate result with resource name and app ID, plus optional warnings
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             schema = CustomerSkAdNetworkConversionValueSchema()
             schema.resource_name = resource_name
@@ -87,9 +88,7 @@ class CustomerSkAdNetworkConversionValueSchemaService:
             request.enable_warnings = enable_warnings
 
             response: MutateCustomerSkAdNetworkConversionValueSchemaResponse = (
-                self.client.mutate_skan_conversion_value_schema(
-                    request=request
-                )
+                self.client.mutate_skan_conversion_value_schema(request=request)
             )
 
             await ctx.log(
@@ -105,7 +104,9 @@ class CustomerSkAdNetworkConversionValueSchemaService:
             await ctx.log(level="error", message=error_msg)
             raise Exception(error_msg) from e
         except Exception as e:
-            error_msg = f"Failed to mutate SkAdNetwork conversion value schema: {str(e)}"
+            error_msg = (
+                f"Failed to mutate SkAdNetwork conversion value schema: {str(e)}"
+            )
             await ctx.log(level="error", message=error_msg)
             raise Exception(error_msg) from e
 
@@ -118,7 +119,8 @@ def create_customer_sk_ad_network_conversion_value_schema_tools(
 
     async def mutate_skan_conversion_value_schema(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
         enable_warnings: bool = False,

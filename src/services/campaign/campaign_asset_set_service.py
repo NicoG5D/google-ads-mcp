@@ -20,7 +20,7 @@ from google.ads.googleads.v20.enums.types.response_content_type import (
     ResponseContentTypeEnum,
 )
 
-from src.utils import resolve_enum
+from src.utils import resolve_enum, resolve_customer_id
 from src.sdk_client import get_sdk_client
 
 
@@ -48,7 +48,8 @@ class CampaignAssetSetService:
 
     def mutate_campaign_asset_sets(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[CampaignAssetSetOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -71,6 +72,7 @@ class CampaignAssetSetService:
             Exception: If the request fails.
         """
         try:
+            customer_id = resolve_customer_id(customer_id)
             request = MutateCampaignAssetSetsRequest(
                 customer_id=customer_id,
                 operations=operations,
@@ -117,7 +119,8 @@ class CampaignAssetSetService:
 
     def link_asset_set_to_campaign(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign: str,
         asset_set: str,
         validate_only: bool = False,
@@ -146,7 +149,8 @@ class CampaignAssetSetService:
 
     def unlink_asset_set_from_campaign(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> MutateCampaignAssetSetsResponse:
@@ -170,7 +174,8 @@ class CampaignAssetSetService:
 
     def link_multiple_asset_sets_to_campaign(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign: str,
         asset_sets: List[str],
         validate_only: bool = False,
@@ -202,7 +207,8 @@ class CampaignAssetSetService:
 
     def link_asset_set_to_multiple_campaigns(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaigns: List[str],
         asset_set: str,
         validate_only: bool = False,
@@ -238,7 +244,8 @@ def register_campaign_asset_set_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_campaign_asset_sets(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -317,7 +324,8 @@ def register_campaign_asset_set_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def link_asset_set_to_campaign(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign: str,
         asset_set: str,
         validate_only: bool = False,
@@ -352,7 +360,8 @@ def register_campaign_asset_set_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def unlink_asset_set_from_campaign(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> dict[str, Any]:
@@ -383,7 +392,8 @@ def register_campaign_asset_set_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def link_multiple_asset_sets_to_campaign(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign: str,
         asset_sets: list[str],
         validate_only: bool = False,
@@ -417,7 +427,8 @@ def register_campaign_asset_set_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def link_asset_set_to_multiple_campaigns(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaigns: list[str],
         asset_set: str,
         validate_only: bool = False,

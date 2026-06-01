@@ -24,7 +24,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class AssetSetService:
     async def create_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         asset_set_type: AssetSetTypeEnum.AssetSetType,
         status: AssetSetStatusEnum.AssetSetStatus = AssetSetStatusEnum.AssetSetStatus.ENABLED,
@@ -71,7 +72,7 @@ class AssetSetService:
             Created asset set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create asset set
             asset_set = AssetSet()
@@ -107,7 +108,8 @@ class AssetSetService:
     async def update_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         name: Optional[str] = None,
         status: Optional[AssetSetStatusEnum.AssetSetStatus] = None,
@@ -125,7 +127,7 @@ class AssetSetService:
             Updated asset set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/assetSets/{asset_set_id}"
 
             # Create asset set with resource name
@@ -177,7 +179,8 @@ class AssetSetService:
     async def list_asset_sets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_type: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
@@ -195,7 +198,7 @@ class AssetSetService:
             List of asset sets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -258,7 +261,8 @@ class AssetSetService:
     async def remove_asset_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
     ) -> Dict[str, Any]:
         """Remove an asset set.
@@ -272,7 +276,7 @@ class AssetSetService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/assetSets/{asset_set_id}"
 
             # Create operation
@@ -316,7 +320,8 @@ def create_asset_set_tools(
 
     async def create_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         asset_set_type: str,
         status: str = "ENABLED",
@@ -359,7 +364,8 @@ def create_asset_set_tools(
 
     async def update_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,
@@ -392,7 +398,8 @@ def create_asset_set_tools(
 
     async def list_asset_sets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_type: Optional[str] = None,
         include_removed: bool = False,
         limit: int = 100,
@@ -418,7 +425,8 @@ def create_asset_set_tools(
 
     async def remove_asset_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_set_id: str,
     ) -> Dict[str, Any]:
         """Remove an asset set.

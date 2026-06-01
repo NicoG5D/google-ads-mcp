@@ -35,7 +35,7 @@ from google.ads.googleads.v20.services.types.asset_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -62,7 +62,8 @@ class AssetService:
     async def create_text_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         text: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -78,7 +79,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create asset
             asset = Asset()
@@ -120,7 +121,8 @@ class AssetService:
     async def create_image_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         image_data_base64: Optional[str] = None,
         image_url: Optional[str] = None,
@@ -144,7 +146,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             if image_file_path:
                 p = Path(image_file_path)
@@ -201,7 +203,8 @@ class AssetService:
     async def create_youtube_video_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         youtube_video_id: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -217,7 +220,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create asset
             asset = Asset()
@@ -259,7 +262,8 @@ class AssetService:
     async def create_sitelink_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         link_text: str,
         final_urls: List[str],
         description1: Optional[str] = None,
@@ -281,7 +285,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             asset = Asset()
             asset.type_ = AssetTypeEnum.AssetType.SITELINK
@@ -318,7 +322,8 @@ class AssetService:
     async def create_callout_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         callout_text: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -334,7 +339,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             asset = Asset()
             asset.type_ = AssetTypeEnum.AssetType.CALLOUT
@@ -366,7 +371,8 @@ class AssetService:
     async def create_structured_snippet_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         header: str,
         values: List[str],
         name: Optional[str] = None,
@@ -384,7 +390,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             asset = Asset()
             asset.type_ = AssetTypeEnum.AssetType.STRUCTURED_SNIPPET
@@ -417,7 +423,8 @@ class AssetService:
     async def create_call_asset(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         country_code: str,
         phone_number: str,
         name: Optional[str] = None,
@@ -435,7 +442,7 @@ class AssetService:
             Created asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             asset = Asset()
             asset.type_ = AssetTypeEnum.AssetType.CALL
@@ -468,7 +475,8 @@ class AssetService:
     async def search_assets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_types: Optional[List[str]] = None,
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
@@ -484,7 +492,7 @@ class AssetService:
             List of asset details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -575,7 +583,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_text_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         text: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -598,7 +607,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_image_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         image_data_base64: Optional[str] = None,
         image_url: Optional[str] = None,
@@ -632,7 +642,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_youtube_video_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         youtube_video_id: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -655,7 +666,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def search_assets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset_types: Optional[List[str]] = None,
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
@@ -678,7 +690,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_sitelink_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         link_text: str,
         final_urls: List[str],
         description1: Optional[str] = None,
@@ -710,7 +723,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_callout_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         callout_text: str,
         name: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -733,7 +747,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_structured_snippet_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         header: str,
         values: List[str],
         name: Optional[str] = None,
@@ -759,7 +774,8 @@ def create_asset_tools(service: AssetService) -> List[Callable[..., Awaitable[An
 
     async def create_call_asset(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         country_code: str,
         phone_number: str,
         name: Optional[str] = None,

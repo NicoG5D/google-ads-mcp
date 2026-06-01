@@ -24,7 +24,7 @@ from google.ads.googleads.v20.services.types.conversion_goal_campaign_config_ser
 )
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_customer_id
+from src.utils import resolve_customer_id
 
 
 class ConversionGoalCampaignConfigService:
@@ -47,7 +47,8 @@ class ConversionGoalCampaignConfigService:
 
     def mutate_conversion_goal_campaign_configs(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[ConversionGoalCampaignConfigOperation],
         validate_only: bool = False,
         response_content_type: Optional[
@@ -65,7 +66,7 @@ class ConversionGoalCampaignConfigService:
         Returns:
             MutateConversionGoalCampaignConfigsResponse: The response containing results
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         request = MutateConversionGoalCampaignConfigsRequest(
             customer_id=customer_id,
             operations=operations,
@@ -118,7 +119,8 @@ def register_conversion_goal_campaign_config_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_conversion_goal_campaign_configs(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         validate_only: bool = False,
     ) -> str:
@@ -176,7 +178,8 @@ def register_conversion_goal_campaign_config_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def update_conversion_goal_campaign_config(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         goal_config_level: Optional[str] = None,
         custom_conversion_goal: Optional[str] = None,

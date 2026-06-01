@@ -31,7 +31,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -60,7 +60,8 @@ class CustomerNegativeCriterionService:
     async def add_negative_keywords(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Add negative keywords at the account level.
@@ -74,7 +75,7 @@ class CustomerNegativeCriterionService:
             List of created customer negative criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -145,7 +146,8 @@ class CustomerNegativeCriterionService:
     async def add_placement_exclusions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         placement_urls: List[str],
     ) -> List[Dict[str, Any]]:
         """Add placement (website) exclusions at the account level.
@@ -159,7 +161,7 @@ class CustomerNegativeCriterionService:
             List of created customer negative criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -225,7 +227,8 @@ class CustomerNegativeCriterionService:
     async def add_content_label_exclusions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         content_labels: List[str],
     ) -> List[Dict[str, Any]]:
         """Add content label exclusions at the account level.
@@ -239,7 +242,7 @@ class CustomerNegativeCriterionService:
             List of created customer negative criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -307,7 +310,8 @@ class CustomerNegativeCriterionService:
     async def list_negative_criteria(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_type: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all customer negative criteria.
@@ -321,7 +325,7 @@ class CustomerNegativeCriterionService:
             List of customer negative criteria
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -384,7 +388,8 @@ class CustomerNegativeCriterionService:
     async def remove_negative_criterion(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a customer negative criterion.
@@ -398,7 +403,7 @@ class CustomerNegativeCriterionService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = CustomerNegativeCriterionOperation()
@@ -441,7 +446,8 @@ def create_customer_negative_criterion_tools(
 
     async def add_negative_keywords(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keywords: List[Dict[str, str]],
     ) -> List[Dict[str, Any]]:
         """Add negative keywords at the account level.
@@ -463,7 +469,8 @@ def create_customer_negative_criterion_tools(
 
     async def add_placement_exclusions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         placement_urls: List[str],
     ) -> List[Dict[str, Any]]:
         """Add placement (website) exclusions at the account level.
@@ -483,7 +490,8 @@ def create_customer_negative_criterion_tools(
 
     async def add_content_label_exclusions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         content_labels: List[str],
     ) -> List[Dict[str, Any]]:
         """Add content label exclusions at the account level.
@@ -515,7 +523,8 @@ def create_customer_negative_criterion_tools(
 
     async def list_negative_criteria(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_type: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """List all customer negative criteria.
@@ -535,7 +544,8 @@ def create_customer_negative_criterion_tools(
 
     async def remove_negative_criterion(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         criterion_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a customer negative criterion.

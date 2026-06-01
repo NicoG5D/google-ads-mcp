@@ -20,7 +20,7 @@ from google.ads.googleads.v20.services.types.keyword_plan_ad_group_service impor
 )
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_customer_id
+from src.utils import resolve_customer_id
 
 
 class KeywordPlanAdGroupService:
@@ -43,7 +43,8 @@ class KeywordPlanAdGroupService:
 
     def mutate_keyword_plan_ad_groups(  # pyright: ignore[reportUnusedFunction]
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[KeywordPlanAdGroupOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -59,7 +60,7 @@ class KeywordPlanAdGroupService:
         Returns:
             MutateKeywordPlanAdGroupsResponse: The response containing results
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         request = MutateKeywordPlanAdGroupsRequest(
             customer_id=customer_id,
             operations=operations,
@@ -144,7 +145,8 @@ def register_keyword_plan_ad_group_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_keyword_plan_ad_groups(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -198,7 +200,8 @@ def register_keyword_plan_ad_group_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_keyword_plan_ad_group(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         keyword_plan_campaign: str,
         name: str,
         cpc_bid_micros: Optional[int] = None,
@@ -231,7 +234,8 @@ def register_keyword_plan_ad_group_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def update_keyword_plan_ad_group(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         name: Optional[str] = None,
         cpc_bid_micros: Optional[int] = None,
@@ -264,7 +268,8 @@ def register_keyword_plan_ad_group_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_keyword_plan_ad_group(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> str:
         """Remove a keyword plan ad group.

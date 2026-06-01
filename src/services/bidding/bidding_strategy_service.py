@@ -34,7 +34,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -63,7 +63,8 @@ class BiddingStrategyService:
     async def create_target_cpa_strategy(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_cpa_micros: int,
         status: str = "ENABLED",
@@ -81,7 +82,7 @@ class BiddingStrategyService:
             Created bidding strategy details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding strategy
             bidding_strategy = BiddingStrategy()
@@ -131,7 +132,8 @@ class BiddingStrategyService:
     async def create_target_roas_strategy(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_roas: float,
         status: str = "ENABLED",
@@ -149,7 +151,7 @@ class BiddingStrategyService:
             Created bidding strategy details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding strategy
             bidding_strategy = BiddingStrategy()
@@ -199,7 +201,8 @@ class BiddingStrategyService:
     async def create_maximize_conversions_strategy(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_cpa_micros: Optional[int] = None,
         status: str = "ENABLED",
@@ -217,7 +220,7 @@ class BiddingStrategyService:
             Created bidding strategy details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding strategy
             bidding_strategy = BiddingStrategy()
@@ -268,7 +271,8 @@ class BiddingStrategyService:
     async def create_maximize_conversion_value_strategy(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_roas: Optional[float] = None,
         status: str = "ENABLED",
@@ -286,7 +290,7 @@ class BiddingStrategyService:
             Created bidding strategy details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             bidding_strategy = BiddingStrategy()
             bidding_strategy.name = name
@@ -332,7 +336,8 @@ class BiddingStrategyService:
     async def create_target_impression_share_strategy(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         location: str,
         location_fraction_micros: int,
@@ -354,7 +359,7 @@ class BiddingStrategyService:
             Created bidding strategy details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create bidding strategy
             bidding_strategy = BiddingStrategy()
@@ -424,7 +429,8 @@ def create_bidding_strategy_tools(
 
     async def create_target_cpa_strategy(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_cpa_micros: int,
         status: str = "ENABLED",
@@ -450,7 +456,8 @@ def create_bidding_strategy_tools(
 
     async def create_target_roas_strategy(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_roas: float,
         status: str = "ENABLED",
@@ -476,7 +483,8 @@ def create_bidding_strategy_tools(
 
     async def create_maximize_conversions_strategy(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_cpa_micros: Optional[int] = None,
         status: str = "ENABLED",
@@ -502,7 +510,8 @@ def create_bidding_strategy_tools(
 
     async def create_target_impression_share_strategy(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         location: str,
         location_fraction_micros: int,
@@ -534,7 +543,8 @@ def create_bidding_strategy_tools(
 
     async def create_maximize_conversion_value_strategy(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         target_roas: Optional[float] = None,
         status: str = "ENABLED",

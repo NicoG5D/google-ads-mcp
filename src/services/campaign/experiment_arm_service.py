@@ -18,7 +18,7 @@ from google.ads.googleads.v20.services.types.experiment_arm_service import (
 )
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_customer_id
+from src.utils import resolve_customer_id
 
 
 class ExperimentArmService:
@@ -41,7 +41,8 @@ class ExperimentArmService:
 
     def mutate_experiment_arms(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[ExperimentArmOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -57,7 +58,7 @@ class ExperimentArmService:
         Returns:
             MutateExperimentArmsResponse: The response containing results
         """
-        customer_id = format_customer_id(customer_id)
+        customer_id = resolve_customer_id(customer_id)
         request = MutateExperimentArmsRequest(
             customer_id=customer_id,
             operations=operations,
@@ -151,7 +152,8 @@ def register_experiment_arm_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_experiment_arms(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -210,7 +212,8 @@ def register_experiment_arm_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_experiment_arm(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         experiment: str,
         name: str,
         control: bool,
@@ -249,7 +252,8 @@ def register_experiment_arm_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def update_experiment_arm(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         name: Optional[str] = None,
         traffic_split: Optional[int] = None,
@@ -285,7 +289,8 @@ def register_experiment_arm_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_experiment_arm(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> str:
         """Remove an experiment arm.

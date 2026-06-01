@@ -25,7 +25,7 @@ from google.ads.googleads.v20.services.types.product_link_invitation_service imp
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     resolve_enum,
     serialize_proto_message,
@@ -57,7 +57,8 @@ class ProductLinkInvitationService:
     async def create_product_link_invitation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         product_link_invitation: ProductLinkInvitation,
     ) -> Dict[str, Any]:
         """Create a product link invitation.
@@ -71,7 +72,7 @@ class ProductLinkInvitationService:
             Created product link invitation details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             request = CreateProductLinkInvitationRequest()
             request.customer_id = customer_id
@@ -100,7 +101,8 @@ class ProductLinkInvitationService:
     async def update_product_link_invitation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         product_link_invitation_status: ProductLinkInvitationStatusEnum.ProductLinkInvitationStatus,
     ) -> Dict[str, Any]:
@@ -116,7 +118,7 @@ class ProductLinkInvitationService:
             Updated product link invitation details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             request = UpdateProductLinkInvitationRequest()
             request.customer_id = customer_id
@@ -146,7 +148,8 @@ class ProductLinkInvitationService:
     async def remove_product_link_invitation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a product link invitation.
@@ -160,7 +163,7 @@ class ProductLinkInvitationService:
             Removal result details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             request = RemoveProductLinkInvitationRequest()
             request.customer_id = customer_id
@@ -195,7 +198,8 @@ def create_product_link_invitation_tools(
 
     async def create_product_link_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         linked_merchant_center_id: Optional[int] = None,
         linked_hotel_center_id: Optional[int] = None,
         linked_advertising_partner_customer: Optional[str] = None,
@@ -250,7 +254,8 @@ def create_product_link_invitation_tools(
 
     async def update_product_link_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         status: str,
     ) -> Dict[str, Any]:
@@ -288,7 +293,8 @@ def create_product_link_invitation_tools(
 
     async def remove_product_link_invitation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> Dict[str, Any]:
         """Remove a product link invitation.

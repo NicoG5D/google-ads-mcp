@@ -48,7 +48,8 @@ class CustomConversionGoalService:
 
     def mutate_custom_conversion_goals(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[CustomConversionGoalOperation],
         validate_only: bool = False,
         response_content_type: Optional[
@@ -158,7 +159,8 @@ def register_custom_conversion_goal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_custom_conversion_goals(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         validate_only: bool = False,
     ) -> str:
@@ -231,7 +233,8 @@ def register_custom_conversion_goal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_custom_conversion_goal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         conversion_actions: list[str],
         status: str = "ENABLED",
@@ -275,7 +278,8 @@ def register_custom_conversion_goal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def update_custom_conversion_goal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         name: Optional[str] = None,
         conversion_actions: Optional[list[str]] = None,
@@ -326,7 +330,8 @@ def register_custom_conversion_goal_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_custom_conversion_goal(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
     ) -> str:
         """Remove a custom conversion goal.

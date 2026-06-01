@@ -24,7 +24,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -53,7 +53,8 @@ class AdGroupAdService:
     async def create_ad_group_ad(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         ad_resource_name: str,
         status: AdGroupAdStatusEnum.AdGroupAdStatus = AdGroupAdStatusEnum.AdGroupAdStatus.ENABLED,
@@ -71,7 +72,7 @@ class AdGroupAdService:
             Created ad group ad details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             ad_group_resource = f"customers/{customer_id}/adGroups/{ad_group_id}"
 
             # Create ad group ad
@@ -112,7 +113,8 @@ class AdGroupAdService:
     async def update_ad_group_ad_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
         status: AdGroupAdStatusEnum.AdGroupAdStatus,
     ) -> Dict[str, Any]:
@@ -128,7 +130,7 @@ class AdGroupAdService:
             Updated ad group ad details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create ad group ad with updated status
             ad_group_ad = AdGroupAd()
@@ -167,7 +169,8 @@ class AdGroupAdService:
     async def list_ad_group_ads(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         include_policy_data: bool = False,
         limit: int = 100,
@@ -185,7 +188,7 @@ class AdGroupAdService:
             List of ad group ads
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -249,7 +252,8 @@ class AdGroupAdService:
     async def remove_ad_group_ad(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad from an ad group.
@@ -263,7 +267,7 @@ class AdGroupAdService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AdGroupAdOperation()
@@ -306,7 +310,8 @@ def create_ad_group_ad_tools(
 
     async def create_ad_group_ad(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: str,
         ad_resource_name: str,
         status: str = "ENABLED",
@@ -337,7 +342,8 @@ def create_ad_group_ad_tools(
 
     async def update_ad_group_ad_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
         status: str,
     ) -> Dict[str, Any]:
@@ -365,7 +371,8 @@ def create_ad_group_ad_tools(
 
     async def list_ad_group_ads(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         include_policy_data: bool = False,
         limit: int = 100,
@@ -391,7 +398,8 @@ def create_ad_group_ad_tools(
 
     async def remove_ad_group_ad(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad from an ad group.

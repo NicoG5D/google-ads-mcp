@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 import grpc
 from google.ads.googleads.errors import GoogleAdsException
@@ -46,6 +46,23 @@ def load_dotenv(dotenv_path: str = ".env") -> None:
             key = key.strip()
             value = value.strip().strip('"').strip("'")
             os.environ.setdefault(key, value)
+
+
+def resolve_customer_id(customer_id: Optional[str]) -> str:
+    """Return customer_id if provided, otherwise fall back to GOOGLE_ADS_CUSTOMER_ID.
+
+    Raises ValueError if neither is set.
+    """
+    from src.sdk_client import (
+        get_default_customer_id,
+    )  # local import avoids circular dep
+
+    value = customer_id or get_default_customer_id()
+    if not value:
+        raise ValueError(
+            "customer_id is required. Pass it explicitly or set GOOGLE_ADS_CUSTOMER_ID in .env."
+        )
+    return value.replace("-", "")
 
 
 def format_customer_id(customer_id: str) -> str:
@@ -159,11 +176,15 @@ def format_ads_error(ex: GoogleAdsException) -> str:
                         for el in field_path_elements:
                             idx = getattr(el, "index", None)
                             name = getattr(el, "field_name", "")
-                            loc_parts.append(f"{name}[{idx}]" if idx is not None else name)
+                            loc_parts.append(
+                                f"{name}[{idx}]" if idx is not None else name
+                            )
                         loc_str = f" [field: {'.'.join(loc_parts)}]"
 
                 msg = error.message or "Unknown error"
-                entry = f"[{code_str}]{loc_str} {msg}" if code_str else f"{msg}{loc_str}"
+                entry = (
+                    f"[{code_str}]{loc_str} {msg}" if code_str else f"{msg}{loc_str}"
+                )
                 parts.append(entry)
         except (TypeError, AttributeError):
             parts = []

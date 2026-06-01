@@ -25,7 +25,7 @@ from google.protobuf import field_mask_pb2
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -56,7 +56,8 @@ class SmartCampaignSettingService:
     async def get_smart_campaign_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
     ) -> Dict[str, Any]:
         """Get the status of a Smart campaign.
@@ -70,8 +71,10 @@ class SmartCampaignSettingService:
             Smart campaign status details including eligibility information
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/smartCampaignSettings/{campaign_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/smartCampaignSettings/{campaign_id}"
+            )
 
             request = GetSmartCampaignStatusRequest()
             request.resource_name = resource_name
@@ -99,7 +102,8 @@ class SmartCampaignSettingService:
     async def update_smart_campaign_setting(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         advertising_language_code: Optional[str] = None,
         final_url: Optional[str] = None,
@@ -138,8 +142,10 @@ class SmartCampaignSettingService:
             Updated smart campaign setting details
         """
         try:
-            customer_id = format_customer_id(customer_id)
-            resource_name = f"customers/{customer_id}/smartCampaignSettings/{campaign_id}"
+            customer_id = resolve_customer_id(customer_id)
+            resource_name = (
+                f"customers/{customer_id}/smartCampaignSettings/{campaign_id}"
+            )
 
             setting = SmartCampaignSetting()
             setting.resource_name = resource_name
@@ -216,7 +222,8 @@ def create_smart_campaign_setting_tools(
 
     async def get_smart_campaign_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
     ) -> Dict[str, Any]:
         """Get the status of a Smart campaign.
@@ -247,7 +254,8 @@ def create_smart_campaign_setting_tools(
 
     async def update_smart_campaign_setting(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         advertising_language_code: Optional[str] = None,
         final_url: Optional[str] = None,

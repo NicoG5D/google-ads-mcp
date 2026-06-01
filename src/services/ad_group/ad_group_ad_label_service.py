@@ -23,7 +23,7 @@ from google.ads.googleads.v20.services.services.google_ads_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -52,7 +52,8 @@ class AdGroupAdLabelService:
     async def create_ad_group_ad_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
         label_resource_name: str,
     ) -> Dict[str, Any]:
@@ -68,7 +69,7 @@ class AdGroupAdLabelService:
             Created ad group ad label details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create ad group ad label
             ad_group_ad_label = AdGroupAdLabel()
@@ -109,7 +110,8 @@ class AdGroupAdLabelService:
     async def list_ad_group_ad_labels(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         label_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -125,7 +127,7 @@ class AdGroupAdLabelService:
             List of ad group ad labels
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -198,7 +200,8 @@ class AdGroupAdLabelService:
     async def remove_ad_group_ad_label(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_label_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group ad label.
@@ -212,7 +215,7 @@ class AdGroupAdLabelService:
             Removal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = AdGroupAdLabelOperation()
@@ -256,7 +259,8 @@ def create_ad_group_ad_label_tools(
 
     async def create_ad_group_ad_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_resource_name: str,
         label_resource_name: str,
     ) -> Dict[str, Any]:
@@ -279,7 +283,8 @@ def create_ad_group_ad_label_tools(
 
     async def list_ad_group_ad_labels(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_id: Optional[str] = None,
         label_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
@@ -302,7 +307,8 @@ def create_ad_group_ad_label_tools(
 
     async def remove_ad_group_ad_label(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         ad_group_ad_label_resource_name: str,
     ) -> Dict[str, Any]:
         """Remove an ad group ad label.

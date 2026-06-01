@@ -16,7 +16,7 @@ from google.ads.googleads.v20.services.types.local_services_lead_service import 
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -48,7 +48,8 @@ class LocalServicesLeadService:
     async def append_lead_conversation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversations: Sequence[Dict[str, str]],
     ) -> Dict[str, Any]:
         """Append conversation messages to local services leads.
@@ -65,7 +66,7 @@ class LocalServicesLeadService:
             List of conversation results or partial failure errors
         """
         try:
-            formatted_customer_id = format_customer_id(customer_id)
+            formatted_customer_id = resolve_customer_id(customer_id)
 
             conv_messages: List[Conversation] = []
             for conv_data in conversations:
@@ -108,7 +109,8 @@ def create_local_services_lead_tools(
 
     async def append_lead_conversation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversations: List[Dict[str, str]],
     ) -> Dict[str, Any]:
         """Append conversation messages to Local Services Ads leads.

@@ -21,7 +21,7 @@ from google.ads.googleads.v20.services.types.recommendation_service import (
 from src.sdk_client import get_sdk_client
 from src.utils import (
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -50,7 +50,8 @@ class RecommendationService:
     async def get_recommendations(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         types: Optional[List[str]] = None,
         campaign_ids: Optional[List[str]] = None,
         dismissed: bool = False,
@@ -70,7 +71,7 @@ class RecommendationService:
             List of recommendations
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -215,7 +216,8 @@ class RecommendationService:
     async def apply_recommendation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_resource_name: str,
     ) -> Dict[str, Any]:
         """Apply a recommendation.
@@ -229,7 +231,7 @@ class RecommendationService:
             Applied recommendation details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operation
             operation = ApplyRecommendationOperation()
@@ -264,7 +266,8 @@ class RecommendationService:
     async def dismiss_recommendation(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_resource_names: List[str],
     ) -> Dict[str, Any]:
         """Dismiss one or more recommendations.
@@ -278,7 +281,7 @@ class RecommendationService:
             Dismissal result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -328,7 +331,8 @@ def create_recommendation_tools(
 
     async def get_recommendations(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         types: Optional[List[str]] = None,
         campaign_ids: Optional[List[str]] = None,
         dismissed: bool = False,
@@ -366,7 +370,8 @@ def create_recommendation_tools(
 
     async def apply_recommendation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_resource_name: str,
     ) -> Dict[str, Any]:
         """Apply a specific recommendation.
@@ -386,7 +391,8 @@ def create_recommendation_tools(
 
     async def dismiss_recommendation(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         recommendation_resource_names: List[str],
     ) -> Dict[str, Any]:
         """Dismiss one or more recommendations.

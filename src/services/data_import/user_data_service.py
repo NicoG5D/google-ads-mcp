@@ -27,7 +27,7 @@ from google.ads.googleads.v20.enums.types.user_identifier_source import (
 from google.ads.googleads.errors import GoogleAdsException
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_ads_error, format_customer_id, get_logger
+from src.utils import format_ads_error, resolve_customer_id, get_logger
 
 logger = get_logger(__name__)
 
@@ -53,7 +53,8 @@ class UserDataService:
     async def upload_enhanced_conversions(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_adjustments: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Upload enhanced conversions with user data.
@@ -67,7 +68,7 @@ class UserDataService:
             Upload result with success/failure details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user data operations
             operations = []
@@ -180,7 +181,8 @@ class UserDataService:
     async def upload_customer_match_data(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         user_data_list: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -196,7 +198,7 @@ class UserDataService:
             Upload result with success/failure details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user data operations
             operations = []
@@ -319,7 +321,8 @@ class UserDataService:
     async def upload_store_sales_data(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         store_sales_data: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -335,7 +338,7 @@ class UserDataService:
             Upload result with success/failure details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create user data operations
             operations = []
@@ -442,7 +445,8 @@ def create_user_data_tools(
 
     async def upload_enhanced_conversions(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_adjustments: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Upload enhanced conversions with user data for better attribution.
@@ -465,7 +469,8 @@ def create_user_data_tools(
 
     async def upload_customer_match_data(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         user_list_id: str,
         user_data_list: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -490,7 +495,8 @@ def create_user_data_tools(
 
     async def upload_store_sales_data(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         conversion_action: str,
         store_sales_data: List[Dict[str, Any]],
     ) -> Dict[str, Any]:

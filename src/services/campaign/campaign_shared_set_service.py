@@ -26,7 +26,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -55,7 +55,8 @@ class CampaignSharedSetService:
     async def attach_shared_set_to_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
         status: str = "ENABLED",
@@ -73,7 +74,7 @@ class CampaignSharedSetService:
             Created campaign shared set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             campaign_resource = f"customers/{customer_id}/campaigns/{campaign_id}"
             shared_set_resource = f"customers/{customer_id}/sharedSets/{shared_set_id}"
 
@@ -118,7 +119,8 @@ class CampaignSharedSetService:
     async def attach_shared_sets_to_campaigns(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attachments: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Attach multiple shared sets to campaigns.
@@ -132,7 +134,7 @@ class CampaignSharedSetService:
             List of created campaign shared set attachments
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Create operations
             operations = []
@@ -190,7 +192,8 @@ class CampaignSharedSetService:
     async def update_campaign_shared_set_status(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
         status: str,
@@ -211,7 +214,7 @@ class CampaignSharedSetService:
             Updated campaign shared set details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             if status == "REMOVED":
                 # If setting to REMOVED, just remove it
@@ -277,7 +280,8 @@ class CampaignSharedSetService:
     async def list_campaign_shared_sets(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         shared_set_id: Optional[str] = None,
         shared_set_type: Optional[str] = None,
@@ -295,7 +299,7 @@ class CampaignSharedSetService:
             List of campaign shared sets
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -355,7 +359,8 @@ class CampaignSharedSetService:
     async def detach_shared_set_from_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
     ) -> Dict[str, Any]:
@@ -371,7 +376,7 @@ class CampaignSharedSetService:
             Detachment result
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             # Campaign shared set resource names use ~ as separator
             campaign_shared_set_resource = f"customers/{customer_id}/campaignSharedSets/{campaign_id}~{shared_set_id}"
 
@@ -406,7 +411,8 @@ class CampaignSharedSetService:
     async def get_campaigns_using_shared_set(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
     ) -> List[Dict[str, Any]]:
         """Get all campaigns using a specific shared set.
@@ -420,7 +426,7 @@ class CampaignSharedSetService:
             List of campaigns using the shared set
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             # Use GoogleAdsService for search
             sdk_client = get_sdk_client()
@@ -475,7 +481,8 @@ def create_campaign_shared_set_tools(
 
     async def attach_shared_set_to_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
         status: str = "ENABLED",
@@ -501,7 +508,8 @@ def create_campaign_shared_set_tools(
 
     async def attach_shared_sets_to_campaigns(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         attachments: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Attach multiple shared sets to campaigns.
@@ -524,7 +532,8 @@ def create_campaign_shared_set_tools(
 
     async def update_campaign_shared_set_status(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
         status: str,
@@ -550,7 +559,8 @@ def create_campaign_shared_set_tools(
 
     async def list_campaign_shared_sets(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: Optional[str] = None,
         shared_set_id: Optional[str] = None,
         shared_set_type: Optional[str] = None,
@@ -576,7 +586,8 @@ def create_campaign_shared_set_tools(
 
     async def detach_shared_set_from_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         shared_set_id: str,
     ) -> Dict[str, Any]:
@@ -599,7 +610,8 @@ def create_campaign_shared_set_tools(
 
     async def get_campaigns_using_shared_set(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         shared_set_id: str,
     ) -> List[Dict[str, Any]]:
         """Get all campaigns using a specific shared set.

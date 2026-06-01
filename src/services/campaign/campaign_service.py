@@ -42,7 +42,7 @@ from src.sdk_client import get_sdk_client
 from src.utils import (
     resolve_enum,
     format_ads_error,
-    format_customer_id,
+    resolve_customer_id,
     get_logger,
     serialize_proto_message,
 )
@@ -128,7 +128,8 @@ class CampaignService:
     async def create_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         budget_resource_name: str,
         advertising_channel_type: AdvertisingChannelTypeEnum.AdvertisingChannelType = AdvertisingChannelTypeEnum.AdvertisingChannelType.SEARCH,
@@ -170,7 +171,7 @@ class CampaignService:
             Created campaign details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
 
             campaign = Campaign()
             campaign.name = name
@@ -213,25 +214,44 @@ class CampaignService:
                 AdvertisingChannelTypeEnum.AdvertisingChannelType, set[str]
             ] = {
                 _SEARCH: {
-                    "MANUAL_CPC", "TARGET_CPA", "TARGET_ROAS",
-                    "MAXIMIZE_CONVERSIONS", "MAXIMIZE_CONVERSION_VALUE",
-                    "TARGET_SPEND", "TARGET_IMPRESSION_SHARE", "PORTFOLIO",
+                    "MANUAL_CPC",
+                    "TARGET_CPA",
+                    "TARGET_ROAS",
+                    "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE",
+                    "TARGET_SPEND",
+                    "TARGET_IMPRESSION_SHARE",
+                    "PORTFOLIO",
                 },
                 _DISPLAY: {
-                    "TARGET_CPA", "TARGET_ROAS", "MAXIMIZE_CONVERSIONS",
-                    "MAXIMIZE_CONVERSION_VALUE", "TARGET_CPM", "MANUAL_CPC",
+                    "TARGET_CPA",
+                    "TARGET_ROAS",
+                    "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE",
+                    "TARGET_CPM",
+                    "MANUAL_CPC",
                     "PORTFOLIO",
                 },
                 _SHOPPING: {
-                    "MANUAL_CPC", "TARGET_ROAS", "MAXIMIZE_CONVERSIONS",
-                    "MAXIMIZE_CONVERSION_VALUE", "TARGET_SPEND", "PORTFOLIO",
+                    "MANUAL_CPC",
+                    "TARGET_ROAS",
+                    "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE",
+                    "TARGET_SPEND",
+                    "PORTFOLIO",
                 },
                 AdvertisingChannelTypeEnum.AdvertisingChannelType.VIDEO: {
-                    "TARGET_CPM", "MAXIMIZE_CONVERSIONS", "TARGET_CPA",
-                    "TARGET_ROAS", "MAXIMIZE_CONVERSION_VALUE", "PORTFOLIO",
+                    "TARGET_CPM",
+                    "MAXIMIZE_CONVERSIONS",
+                    "TARGET_CPA",
+                    "TARGET_ROAS",
+                    "MAXIMIZE_CONVERSION_VALUE",
+                    "PORTFOLIO",
                 },
                 _PMAX: {
-                    "MAXIMIZE_CONVERSIONS", "MAXIMIZE_CONVERSION_VALUE", "PORTFOLIO",
+                    "MAXIMIZE_CONVERSIONS",
+                    "MAXIMIZE_CONVERSION_VALUE",
+                    "PORTFOLIO",
                 },
             }
             bst_upper = bidding_strategy_type.upper()
@@ -282,7 +302,8 @@ class CampaignService:
     async def update_campaign(
         self,
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         name: Optional[str] = None,
         status: Optional[CampaignStatusEnum.CampaignStatus] = None,
@@ -316,7 +337,7 @@ class CampaignService:
             Updated campaign details
         """
         try:
-            customer_id = format_customer_id(customer_id)
+            customer_id = resolve_customer_id(customer_id)
             resource_name = f"customers/{customer_id}/campaigns/{campaign_id}"
 
             campaign = Campaign()
@@ -406,7 +427,8 @@ def create_campaign_tools(
 
     async def create_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         name: str,
         budget_resource_name: str,
         advertising_channel_type: str = "SEARCH",
@@ -480,7 +502,8 @@ def create_campaign_tools(
 
     async def update_campaign(
         ctx: Context,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         campaign_id: str,
         name: Optional[str] = None,
         status: Optional[str] = None,

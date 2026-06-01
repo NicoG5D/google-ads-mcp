@@ -27,7 +27,7 @@ from google.ads.googleads.v20.enums.types.asset_link_status import (
 )
 from google.protobuf import field_mask_pb2
 
-from src.utils import resolve_enum
+from src.utils import resolve_enum, resolve_customer_id
 from src.sdk_client import get_sdk_client
 
 
@@ -55,7 +55,8 @@ class CustomerAssetService:
 
     def mutate_customer_assets(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: List[CustomerAssetOperation],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -78,6 +79,7 @@ class CustomerAssetService:
             GoogleAdsException: If the request fails.
         """
         try:
+            customer_id = resolve_customer_id(customer_id)
             request = MutateCustomerAssetsRequest(
                 customer_id=customer_id,
                 operations=operations,
@@ -160,7 +162,8 @@ class CustomerAssetService:
 
     def create_customer_asset(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset: str,
         field_type: AssetFieldTypeEnum.AssetFieldType,
         status: AssetLinkStatusEnum.AssetLinkStatus = AssetLinkStatusEnum.AssetLinkStatus.ENABLED,
@@ -192,7 +195,8 @@ class CustomerAssetService:
 
     def update_customer_asset_status(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         status: AssetLinkStatusEnum.AssetLinkStatus,
         validate_only: bool = False,
@@ -221,7 +225,8 @@ class CustomerAssetService:
 
     def remove_customer_asset(
         self,
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> MutateCustomerAssetsResponse:
@@ -249,7 +254,8 @@ def register_customer_asset_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def mutate_customer_assets(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         operations: list[dict[str, Any]],
         partial_failure: bool = False,
         validate_only: bool = False,
@@ -357,7 +363,8 @@ def register_customer_asset_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def create_customer_asset(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         asset: str,
         field_type: str,
         status: str = "ENABLED",
@@ -404,7 +411,8 @@ def register_customer_asset_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def update_customer_asset_status(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         status: str,
         validate_only: bool = False,
@@ -443,7 +451,8 @@ def register_customer_asset_tools(mcp: FastMCP[Any]) -> None:
 
     @mcp.tool
     async def remove_customer_asset(  # pyright: ignore[reportUnusedFunction]
-        customer_id: str,
+        *,
+        customer_id: Optional[str] = None,
         resource_name: str,
         validate_only: bool = False,
     ) -> dict[str, Any]:
