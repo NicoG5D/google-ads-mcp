@@ -245,12 +245,33 @@ class AudienceInsightsService:
 
             # Add attribute groups if provided
             if audience_attribute_groups:
-                for _ in (
-                    audience_attribute_groups
-                ):  # group_data will be used when fully implemented
+                from google.ads.googleads.v20.common.types.audience_insights_attribute import (
+                    AudienceInsightsAttribute,
+                )
+
+                for group_data in audience_attribute_groups:
                     attr_group = InsightsAudienceAttributeGroup()
-                    # Process attributes based on group_data structure
-                    # This is a simplified implementation
+                    for attr_data in group_data.get("attributes", []):
+                        attr = AudienceInsightsAttribute()
+                        attr_type = attr_data.get("type", "")
+                        if attr_type == "user_interest":
+                            attr.user_interest.user_interest_category = (
+                                f"customers/{customer_id}/userInterests/"
+                                f"{attr_data['user_interest_id']}"
+                            )
+                        elif attr_type == "location":
+                            attr.location.geo_target_constant = f"geoTargetConstants/{attr_data['geo_target_constant_id']}"
+                        elif attr_type == "age_range":
+                            attr.age_range.type_ = getattr(
+                                AgeRangeTypeEnum.AgeRangeType,
+                                attr_data["age_range"],
+                            )
+                        elif attr_type == "gender":
+                            attr.gender.type_ = getattr(
+                                GenderTypeEnum.GenderType, attr_data["gender"]
+                            )
+                        if attr_type:
+                            attr_group.attributes.append(attr)
                     audience.topic_audience_combinations.append(attr_group)
 
             # Create request

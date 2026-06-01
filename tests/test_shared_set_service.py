@@ -544,33 +544,53 @@ async def test_list_shared_sets_type_filter_only(
 
 
 @pytest.mark.asyncio
-async def test_attach_shared_set_to_campaigns_not_implemented(
+async def test_attach_shared_set_to_campaigns(
     shared_set_service: SharedSetService,
     mock_sdk_client: Any,
     mock_ctx: Context,
 ) -> None:
-    """Test that attach_shared_set_to_campaigns raises NotImplementedError."""
-    # Arrange
+    """Test attaching a shared set to multiple campaigns."""
+    from google.ads.googleads.v20.services.services.campaign_shared_set_service import (
+        CampaignSharedSetServiceClient,
+    )
+
     customer_id = "1234567890"
     shared_set_id = "123456"
     campaign_ids = ["111", "222"]
 
-    # Mock the get_sdk_client call within the method
-    with patch(
-        "src.services.shared.shared_set_service.get_sdk_client",
-        return_value=mock_sdk_client,
-    ):
-        # Act & Assert
-        with pytest.raises(Exception) as exc_info:
-            await shared_set_service.attach_shared_set_to_campaigns(
-                ctx=mock_ctx,
-                customer_id=customer_id,
-                shared_set_id=shared_set_id,
-                campaign_ids=campaign_ids,
-            )
+    mock_css_client = Mock(spec=CampaignSharedSetServiceClient)
+    mock_response = Mock()
+    mock_css_client.mutate_campaign_shared_sets.return_value = mock_response
 
-        # The NotImplementedError gets wrapped, so check that the method failed appropriately
-        assert "Failed to attach shared set to campaigns" in str(exc_info.value)
+    mock_sdk_client.client.get_service.return_value = mock_css_client
+
+    expected_result = {"results": [{"resource_name": "r1"}, {"resource_name": "r2"}]}
+
+    with (
+        patch(
+            "src.services.shared.shared_set_service.get_sdk_client",
+            return_value=mock_sdk_client,
+        ),
+        patch(
+            "src.services.shared.shared_set_service.serialize_proto_message",
+            return_value=expected_result,
+        ),
+    ):
+        result = await shared_set_service.attach_shared_set_to_campaigns(
+            ctx=mock_ctx,
+            customer_id=customer_id,
+            shared_set_id=shared_set_id,
+            campaign_ids=campaign_ids,
+        )
+
+    assert result == expected_result
+    mock_css_client.mutate_campaign_shared_sets.assert_called_once()
+    req = mock_css_client.mutate_campaign_shared_sets.call_args.kwargs["request"]
+    assert req.customer_id == customer_id
+    assert len(req.operations) == 2
+    # Verify the shared_set resource is set on each operation
+    for op in req.operations:
+        assert shared_set_id in op.create.shared_set
 
 
 @pytest.mark.asyncio

@@ -165,6 +165,151 @@ class BatchJobService:
             await ctx.log(level="error", message=error_msg)
             raise Exception(error_msg) from e
 
+    def _build_mutate_operation(self, op: Any, customer_id: str) -> MutateOperation:
+        """Build a MutateOperation from a simplified operation dict.
+
+        Supported types:
+          campaign_budget: create(name, amount_micros) | update(resource_name, amount_micros) | remove(resource_name)
+          campaign: update(resource_name, name?, status?) | remove(resource_name)
+          ad_group: create(name, campaign_id, cpc_bid_micros?) | update(resource_name, ...) | remove(resource_name)
+          ad_group_criterion/keyword: create(ad_group_id, text, match_type?) | remove(resource_name)
+        """
+        from google.ads.googleads.v20.enums.types.campaign_status import (
+            CampaignStatusEnum,
+        )
+        from google.ads.googleads.v20.enums.types.ad_group_status import (
+            AdGroupStatusEnum,
+        )
+        from google.ads.googleads.v20.enums.types.keyword_match_type import (
+            KeywordMatchTypeEnum,
+        )
+        from google.ads.googleads.v20.resources.types.campaign_budget import (
+            CampaignBudget,
+        )
+        from google.ads.googleads.v20.resources.types.campaign import Campaign
+        from google.ads.googleads.v20.resources.types.ad_group import AdGroup
+        from google.ads.googleads.v20.resources.types.ad_group_criterion import (
+            AdGroupCriterion,
+        )
+        from google.ads.googleads.v20.common.types.criteria import KeywordInfo
+        from google.ads.googleads.v20.services.types.campaign_budget_service import (
+            CampaignBudgetOperation,
+        )
+        from google.ads.googleads.v20.services.types.campaign_service import (
+            CampaignOperation,
+        )
+        from google.ads.googleads.v20.services.types.ad_group_service import (
+            AdGroupOperation,
+        )
+        from google.ads.googleads.v20.services.types.ad_group_criterion_service import (
+            AdGroupCriterionOperation,
+        )
+        from google.protobuf import field_mask_pb2
+
+        op_type = op.get("type", "")
+        action = op.get("action", "create")
+        mutate_op = MutateOperation()
+
+        if op_type == "campaign_budget":
+            budget_op = CampaignBudgetOperation()
+            if action == "create":
+                budget = CampaignBudget()
+                budget.name = op["name"]
+                budget.amount_micros = op["amount_micros"]
+                budget.explicitly_shared = op.get("explicitly_shared", True)
+                budget_op.create = budget
+            elif action == "update":
+                budget = CampaignBudget()
+                budget.resource_name = op["resource_name"]
+                fields = []
+                if "amount_micros" in op:
+                    budget.amount_micros = op["amount_micros"]
+                    fields.append("amount_micros")
+                budget_op.update = budget
+                budget_op.update_mask.CopyFrom(field_mask_pb2.FieldMask(paths=fields))
+            elif action == "remove":
+                budget_op.remove = op["resource_name"]
+            mutate_op.campaign_budget_operation = budget_op
+
+        elif op_type == "campaign":
+            campaign_op = CampaignOperation()
+            if action == "update":
+                campaign = Campaign()
+                campaign.resource_name = op["resource_name"]
+                fields = []
+                if "name" in op:
+                    campaign.name = op["name"]
+                    fields.append("name")
+                if "status" in op:
+                    campaign.status = getattr(
+                        CampaignStatusEnum.CampaignStatus, op["status"]
+                    )
+                    fields.append("status")
+                campaign_op.update = campaign
+                campaign_op.update_mask.CopyFrom(field_mask_pb2.FieldMask(paths=fields))
+            elif action == "remove":
+                campaign_op.remove = op["resource_name"]
+            mutate_op.campaign_operation = campaign_op
+
+        elif op_type == "ad_group":
+            ag_op = AdGroupOperation()
+            if action == "create":
+                ad_group = AdGroup()
+                ad_group.name = op["name"]
+                ad_group.campaign = (
+                    f"customers/{customer_id}/campaigns/{op['campaign_id']}"
+                )
+                if "cpc_bid_micros" in op:
+                    ad_group.cpc_bid_micros = op["cpc_bid_micros"]
+                ag_op.create = ad_group
+            elif action == "update":
+                ad_group = AdGroup()
+                ad_group.resource_name = op["resource_name"]
+                fields = []
+                if "name" in op:
+                    ad_group.name = op["name"]
+                    fields.append("name")
+                if "status" in op:
+                    ad_group.status = getattr(
+                        AdGroupStatusEnum.AdGroupStatus, op["status"]
+                    )
+                    fields.append("status")
+                if "cpc_bid_micros" in op:
+                    ad_group.cpc_bid_micros = op["cpc_bid_micros"]
+                    fields.append("cpc_bid_micros")
+                ag_op.update = ad_group
+                ag_op.update_mask.CopyFrom(field_mask_pb2.FieldMask(paths=fields))
+            elif action == "remove":
+                ag_op.remove = op["resource_name"]
+            mutate_op.ad_group_operation = ag_op
+
+        elif op_type in ("ad_group_criterion", "keyword"):
+            crit_op = AdGroupCriterionOperation()
+            if action == "create":
+                criterion = AdGroupCriterion()
+                criterion.ad_group = (
+                    f"customers/{customer_id}/adGroups/{op['ad_group_id']}"
+                )
+                keyword = KeywordInfo()
+                keyword.text = op["text"]
+                keyword.match_type = getattr(
+                    KeywordMatchTypeEnum.KeywordMatchType,
+                    op.get("match_type", "BROAD"),
+                )
+                criterion.keyword = keyword
+                crit_op.create = criterion
+            elif action == "remove":
+                crit_op.remove = op["resource_name"]
+            mutate_op.ad_group_criterion_operation = crit_op
+
+        else:
+            raise ValueError(
+                f"Unsupported operation type '{op_type}'. "
+                "Supported: campaign_budget, campaign, ad_group, ad_group_criterion/keyword"
+            )
+
+        return mutate_op
+
     async def add_operations_to_batch_job(
         self,
         ctx: Context,
@@ -186,31 +331,15 @@ class BatchJobService:
         try:
             customer_id = format_customer_id(customer_id)
 
-            # Note: This is a simplified implementation
-            # In practice, you'd need to construct proper MutateOperation objects
-            # based on the specific operation types (campaign, ad group, keyword, etc.)
+            operations = [
+                self._build_mutate_operation(op, customer_id) for op in operations_data
+            ]
 
-            operations = []
-            for _ in operations_data:
-                # This is a placeholder - actual implementation would require
-                # parsing the operation data and creating appropriate MutateOperation objects
-                operation = MutateOperation()
-                # You would set the appropriate operation based on op_data['type']
-                # For example:
-                # if op_data.get('type') == 'campaign':
-                #     operation.campaign_operation = ...
-                # elif op_data.get('type') == 'ad_group':
-                #     operation.ad_group_operation = ...
-                # etc.
-                operations.append(operation)
-
-            # Create request
             request = AddBatchJobOperationsRequest()
             request.resource_name = batch_job_resource_name
-            request.sequence_token = ""  # Start with empty token
+            request.sequence_token = ""
             request.mutate_operations = operations
 
-            # Make the API call
             response: AddBatchJobOperationsResponse = (
                 self.client.add_batch_job_operations(request=request)
             )
@@ -220,7 +349,6 @@ class BatchJobService:
                 message=f"Added {len(operations)} operations to batch job",
             )
 
-            # Return serialized response
             return serialize_proto_message(response)
 
         except GoogleAdsException as e:
@@ -447,15 +575,36 @@ def create_batch_job_tools(
         batch_job_resource_name: str,
         operations_data: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
-        """Add operations to a batch job.
+        """Add operations to a batch job for bulk execution.
+
+        Each operation dict must have a "type" and "action" field.
+        Supported types and their required fields:
+
+        campaign_budget:
+          create: {type, action, name, amount_micros, explicitly_shared?}
+          update: {type, action, resource_name, amount_micros?}
+          remove: {type, action, resource_name}
+
+        campaign:
+          update: {type, action, resource_name, name?, status?}
+          remove: {type, action, resource_name}
+
+        ad_group:
+          create: {type, action, name, campaign_id, cpc_bid_micros?}
+          update: {type, action, resource_name, name?, status?, cpc_bid_micros?}
+          remove: {type, action, resource_name}
+
+        ad_group_criterion (or keyword):
+          create: {type, action, ad_group_id, text, match_type?}
+          remove: {type, action, resource_name}
 
         Args:
             customer_id: The customer ID
             batch_job_resource_name: The batch job resource name
-            operations_data: List of operation data in simplified format
+            operations_data: List of operation dicts as described above
 
         Returns:
-            Result of adding operations with sequence token
+            Result with sequence_token for chaining more add_operations calls
         """
         return await service.add_operations_to_batch_job(
             ctx=ctx,

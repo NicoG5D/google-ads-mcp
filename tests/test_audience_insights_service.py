@@ -298,7 +298,10 @@ async def test_generate_audience_composition_insights_with_attribute_groups(
     customer_id = "1234567890"
     audience_countries = ["2840"]
     dimensions = ["AGE_RANGE"]
-    audience_attribute_groups = [{"type": "custom_affinity"}, {"type": "in_market"}]
+    audience_attribute_groups = [
+        {"attributes": [{"type": "user_interest", "user_interest_id": "123"}]},
+        {"attributes": [{"type": "user_interest", "user_interest_id": "456"}]},
+    ]
 
     # Create mock response
     mock_response = Mock(spec=GenerateAudienceCompositionInsightsResponse)

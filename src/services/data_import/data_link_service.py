@@ -1,32 +1,49 @@
 """Data link service implementation using Google Ads SDK."""
 
-from typing import Any, Dict, List, Optional, Callable, Awaitable
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from fastmcp import Context, FastMCP
+from google.ads.googleads.errors import GoogleAdsException
+from google.ads.googleads.v20.enums.types.data_link_status import DataLinkStatusEnum
+from google.ads.googleads.v20.resources.types.data_link import (
+    DataLink,
+    YoutubeVideoIdentifier,
+)
 from google.ads.googleads.v20.services.services.data_link_service import (
     DataLinkServiceClient,
 )
-
-# Note: Data link types not fully available in v20 - simplified implementation
-# Note: Common data link types may not be available in v20
-from google.ads.googleads.errors import GoogleAdsException
+from google.ads.googleads.v20.services.services.google_ads_service import (
+    GoogleAdsServiceClient,
+)
+from google.ads.googleads.v20.services.types.data_link_service import (
+    CreateDataLinkRequest,
+    CreateDataLinkResponse,
+    RemoveDataLinkRequest,
+    RemoveDataLinkResponse,
+    UpdateDataLinkRequest,
+    UpdateDataLinkResponse,
+)
 
 from src.sdk_client import get_sdk_client
-from src.utils import format_ads_error, format_customer_id, get_logger
+from src.utils import (
+    format_ads_error,
+    format_customer_id,
+    get_logger,
+    resolve_enum,
+    serialize_proto_message,
+)
 
 logger = get_logger(__name__)
 
 
 class DataLinkService:
-    """Data link service for managing third-party data connections."""
+    """Data link service for connecting Google Ads to external data (YouTube videos)."""
 
     def __init__(self) -> None:
-        """Initialize the data link service."""
         self._client: Optional[DataLinkServiceClient] = None
 
     @property
     def client(self) -> DataLinkServiceClient:
-        """Get the data link service client."""
         if self._client is None:
             sdk_client = get_sdk_client()
             self._client = sdk_client.client.get_service(
@@ -35,22 +52,21 @@ class DataLinkService:
         assert self._client is not None
         return self._client
 
-    async def create_basic_data_link(
+    async def create_youtube_video_data_link(
         self,
         ctx: Context,
         customer_id: str,
-        data_link_name: str,
-        data_link_type: str,
-        external_id: str,
+        video_id: str,
+        channel_id: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Create a basic data link (simplified due to v20 limitations).
+        """Create a data link to a YouTube video.
 
         Args:
             ctx: FastMCP context
             customer_id: The customer ID
-            data_link_name: Name for the data link
-            data_link_type: Type of data link (WEBAPP, ADVERTISER, etc.)
-            external_id: External identifier (URL for webapp, ID for advertiser)
+            video_id: The 11-character YouTube video ID
+                (e.g. "jV1vkHv4zq8" from youtube.com/watch?v=jV1vkHv4zq8)
+            channel_id: Optional YouTube channel ID (e.g. "UCK8sQmJBp8GCxrOtXWBpyEA")
 
         Returns:
             Created data link details
@@ -58,20 +74,27 @@ class DataLinkService:
         try:
             customer_id = format_customer_id(customer_id)
 
-            # Note: Complex data link types not available in v20 - simplified implementation
-            await ctx.log(
-                level="info",
-                message=f"Data link creation requested: {data_link_name} ({data_link_type}) for {external_id}",
+            youtube_video = YoutubeVideoIdentifier()
+            youtube_video.video_id = video_id
+            if channel_id:
+                youtube_video.channel_id = channel_id
+
+            data_link = DataLink()
+            data_link.youtube_video = youtube_video
+
+            request = CreateDataLinkRequest()
+            request.customer_id = customer_id
+            request.data_link = data_link
+
+            response: CreateDataLinkResponse = self.client.create_data_link(
+                request=request
             )
 
-            return {
-                "customer_id": customer_id,
-                "data_link_name": data_link_name,
-                "type": data_link_type,
-                "external_id": external_id,
-                "status": "Request processed - full data link creation requires additional v20 type support",
-                "note": "This is a simplified implementation due to v20 API limitations",
-            }
+            await ctx.log(
+                level="info",
+                message=f"Created YouTube video data link for video {video_id}",
+            )
+            return serialize_proto_message(response)
 
         except GoogleAdsException as e:
             error_msg = format_ads_error(e)
@@ -82,36 +105,144 @@ class DataLinkService:
             await ctx.log(level="error", message=error_msg)
             raise Exception(error_msg) from e
 
-    async def list_data_links(
+    async def update_data_link(
         self,
         ctx: Context,
         customer_id: str,
-    ) -> List[Dict[str, Any]]:
-        """List data links for a customer (simplified due to v20 limitations).
+        resource_name: str,
+        status: str,
+    ) -> Dict[str, Any]:
+        """Update a data link's status.
 
         Args:
             ctx: FastMCP context
             customer_id: The customer ID
+            resource_name: The data link resource name
+            status: New status — ENABLED, DISABLED, or REVOKED
 
         Returns:
-            List of data links (simplified implementation)
+            Updated data link details
         """
         try:
             customer_id = format_customer_id(customer_id)
 
-            # Note: Complex data link queries not fully supported in v20
-            await ctx.log(
-                level="info",
-                message=f"Data link list requested for customer {customer_id}",
+            request = UpdateDataLinkRequest()
+            request.customer_id = customer_id
+            request.resource_name = resource_name
+            request.data_link_status = resolve_enum(
+                DataLinkStatusEnum.DataLinkStatus, status, "status"
             )
 
-            return [
-                {
-                    "customer_id": customer_id,
-                    "status": "Request processed - data link listing requires additional v20 type support",
-                    "note": "This is a simplified implementation due to v20 API limitations",
-                }
-            ]
+            response: UpdateDataLinkResponse = self.client.update_data_link(
+                request=request
+            )
+
+            await ctx.log(
+                level="info",
+                message=f"Updated data link {resource_name} to status {status}",
+            )
+            return serialize_proto_message(response)
+
+        except GoogleAdsException as e:
+            error_msg = format_ads_error(e)
+            await ctx.log(level="error", message=error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Failed to update data link: {str(e)}"
+            await ctx.log(level="error", message=error_msg)
+            raise Exception(error_msg) from e
+
+    async def remove_data_link(
+        self,
+        ctx: Context,
+        customer_id: str,
+        resource_name: str,
+    ) -> Dict[str, Any]:
+        """Remove a data link.
+
+        Args:
+            ctx: FastMCP context
+            customer_id: The customer ID
+            resource_name: The data link resource name to remove
+
+        Returns:
+            Removal result
+        """
+        try:
+            customer_id = format_customer_id(customer_id)
+
+            request = RemoveDataLinkRequest()
+            request.customer_id = customer_id
+            request.resource_name = resource_name
+
+            response: RemoveDataLinkResponse = self.client.remove_data_link(
+                request=request
+            )
+
+            await ctx.log(
+                level="info",
+                message=f"Removed data link {resource_name}",
+            )
+            return serialize_proto_message(response)
+
+        except GoogleAdsException as e:
+            error_msg = format_ads_error(e)
+            await ctx.log(level="error", message=error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Failed to remove data link: {str(e)}"
+            await ctx.log(level="error", message=error_msg)
+            raise Exception(error_msg) from e
+
+    async def list_data_links(
+        self,
+        ctx: Context,
+        customer_id: str,
+        status_filter: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """List data links for a customer.
+
+        Args:
+            ctx: FastMCP context
+            customer_id: The customer ID
+            status_filter: Optional status filter (ENABLED, DISABLED, REVOKED, etc.)
+
+        Returns:
+            List of data links
+        """
+        try:
+            customer_id = format_customer_id(customer_id)
+
+            sdk_client = get_sdk_client()
+            google_ads_service: GoogleAdsServiceClient = sdk_client.client.get_service(
+                "GoogleAdsService"
+            )
+
+            query = """
+                SELECT
+                    data_link.resource_name,
+                    data_link.data_link_id,
+                    data_link.product_link_id,
+                    data_link.type,
+                    data_link.status,
+                    data_link.youtube_video.video_id,
+                    data_link.youtube_video.channel_id
+                FROM data_link
+            """
+
+            if status_filter:
+                query += f" WHERE data_link.status = '{status_filter}'"
+
+            query += " ORDER BY data_link.data_link_id"
+
+            response = google_ads_service.search(customer_id=customer_id, query=query)
+            results = [serialize_proto_message(row) for row in response]
+
+            await ctx.log(
+                level="info",
+                message=f"Found {len(results)} data links",
+            )
+            return results
 
         except Exception as e:
             error_msg = f"Failed to list data links: {str(e)}"
@@ -122,59 +253,109 @@ class DataLinkService:
 def create_data_link_tools(
     service: DataLinkService,
 ) -> List[Callable[..., Awaitable[Any]]]:
-    """Create tool functions for the data link service.
-
-    This returns a list of tool functions that can be registered with FastMCP.
-    This approach makes the tools testable by allowing service injection.
-    """
+    """Create MCP tool functions for the data link service."""
     tools = []
 
-    async def create_basic_data_link(
+    async def create_youtube_video_data_link(
         ctx: Context,
         customer_id: str,
-        data_link_name: str,
-        data_link_type: str,
-        external_id: str,
+        video_id: str,
+        channel_id: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Create a basic data link (simplified due to v20 limitations).
+        """Create a data link connecting a Google Ads account to a YouTube video.
+
+        Data links allow Google Ads to access YouTube video metrics for
+        reporting and attribution. The link must be approved by the video owner.
 
         Args:
             customer_id: The customer ID
-            data_link_name: Name for the data link
-            data_link_type: Type of data link (WEBAPP, ADVERTISER, etc.)
-            external_id: External identifier (URL for webapp, ID for advertiser)
+            video_id: The 11-character YouTube video ID
+                (from the URL: youtube.com/watch?v=<video_id>)
+            channel_id: Optional channel ID (starts with "UC")
 
         Returns:
-            Created data link details (simplified implementation)
+            Created data link with resource_name and status (starts as REQUESTED,
+            requires approval from the YouTube channel owner)
         """
-        return await service.create_basic_data_link(
+        return await service.create_youtube_video_data_link(
             ctx=ctx,
             customer_id=customer_id,
-            data_link_name=data_link_name,
-            data_link_type=data_link_type,
-            external_id=external_id,
+            video_id=video_id,
+            channel_id=channel_id,
+        )
+
+    async def update_data_link(
+        ctx: Context,
+        customer_id: str,
+        resource_name: str,
+        status: str,
+    ) -> Dict[str, Any]:
+        """Update a data link's status.
+
+        Args:
+            customer_id: The customer ID
+            resource_name: The data link resource name
+            status: New status:
+                - ENABLED: Active link
+                - DISABLED: Temporarily disabled
+                - REVOKED: Permanently revoked
+
+        Returns:
+            Updated data link details
+        """
+        return await service.update_data_link(
+            ctx=ctx,
+            customer_id=customer_id,
+            resource_name=resource_name,
+            status=status,
+        )
+
+    async def remove_data_link(
+        ctx: Context,
+        customer_id: str,
+        resource_name: str,
+    ) -> Dict[str, Any]:
+        """Remove a data link.
+
+        Args:
+            customer_id: The customer ID
+            resource_name: The data link resource name to remove
+
+        Returns:
+            Removal result
+        """
+        return await service.remove_data_link(
+            ctx=ctx,
+            customer_id=customer_id,
+            resource_name=resource_name,
         )
 
     async def list_data_links(
         ctx: Context,
         customer_id: str,
+        status_filter: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
-        """List data links for a customer (simplified due to v20 limitations).
+        """List data links for a customer.
 
         Args:
             customer_id: The customer ID
+            status_filter: Optional filter by status:
+                REQUESTED, PENDING_APPROVAL, ENABLED, DISABLED, REVOKED, REJECTED
 
         Returns:
-            List of data links (simplified implementation)
+            List of data links with type, status, and video/channel details
         """
         return await service.list_data_links(
             ctx=ctx,
             customer_id=customer_id,
+            status_filter=status_filter,
         )
 
     tools.extend(
         [
-            create_basic_data_link,
+            create_youtube_video_data_link,
+            update_data_link,
+            remove_data_link,
             list_data_links,
         ]
     )
@@ -182,15 +363,8 @@ def create_data_link_tools(
 
 
 def register_data_link_tools(mcp: FastMCP[Any]) -> DataLinkService:
-    """Register data link tools with the MCP server.
-
-    Returns the DataLinkService instance for testing purposes.
-    """
+    """Register data link tools with the MCP server."""
     service = DataLinkService()
-    tools = create_data_link_tools(service)
-
-    # Register each tool
-    for tool in tools:
+    for tool in create_data_link_tools(service):
         mcp.tool(tool)
-
     return service

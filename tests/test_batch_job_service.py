@@ -181,8 +181,17 @@ async def test_add_operations_to_batch_job(
     customer_id = "1234567890"
     batch_job_resource_name = f"customers/{customer_id}/batchJobs/123"
     operations_data = [
-        {"type": "campaign", "name": "Test Campaign 1"},
-        {"type": "ad_group", "name": "Test Ad Group 1"},
+        {
+            "type": "campaign",
+            "action": "remove",
+            "resource_name": "customers/1234567890/campaigns/111",
+        },
+        {
+            "type": "ad_group",
+            "action": "create",
+            "name": "Test Ad Group 1",
+            "campaign_id": "111",
+        },
     ]
 
     # Create mock response
